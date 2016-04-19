@@ -37,7 +37,6 @@
                 android:value="org.oucho.radio2.MainActivity"/>
         </activity>
 
-
         <service android:name=".Player" />
 
         <receiver
