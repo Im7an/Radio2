@@ -17,7 +17,7 @@ Pre-requisites
 Screenshots
 -----------
 
-![Phone](screenshot/screen.jpg)
+<img alt="screenshot" src="/screenshot/screen.jpg?raw=true" width="250px" />
 
 License
 -------
