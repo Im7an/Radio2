@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="org.oucho.radio2.MainActivity"
+    tools:showIn="@layout/activity_main">
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/affichage_info">
+    <TextView
+        android:id="@+id/station"
+        android:layout_width="270dp"
+        android:layout_height="wrap_content"
+        android:text="Radio"
+        android:textColor="@color/primary_text"
+        android:textSize="36dp"
+        android:typeface="normal"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="5dp"
+        android:layout_centerHorizontal="true"/>
+
+
+
+    <TextView
+        android:id="@+id/etat"
+        android:layout_width="95dp"
+        android:layout_height="wrap_content"
+        android:text="en attente"
+        android:textColor="@color/secondary_text"
+        android:textSize="12dp"
+        android:typeface="normal"
+        android:textStyle="italic"
+        android:textAlignment="center"
+        android:layout_marginTop="60dp"
+        android:layout_centerHorizontal="true"/>
+
+
+    <ImageView
+        android:id="@+id/icon_equalizer"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/ic_equalizer0"
+        android:tint="@color/secondary_text"
+        android:layout_marginTop="62dp"
+        android:layout_marginLeft="45dp"/>
+
+    <TextView
+        android:id="@+id/bitrate"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:text="0kb/s"
+        android:textColor="@color/secondary_text"
+        android:textSize="8dp"
+        android:typeface="normal"
+        android:layout_marginTop="69dp"
+        android:layout_marginLeft="67dp" />
+
+    <ImageView
+        android:id="@+id/icon_volume"
+        android:layout_width="32dp"
+        android:layout_height="25dp"
+        android:src="@drawable/volume0"
+        android:tint="@color/secondary_text"
+        android:layout_marginTop="58dp"
+        android:layout_marginLeft="285dp"/>
+
+</RelativeLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/playerBar"
+        android:layout_marginTop="@dimen/affichage_info"/>
+
+
+    <RelativeLayout
+        android:id="@+id/bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/playerBar"
+        android:layout_alignParentBottom="true"
+        android:background="@color/transparent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/cardBorderColor"
+            tools:ignore="ContentDescription" />
+
+
+        <ImageButton
+            android:id="@+id/timer"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_sleep_timer"
+            android:tint="@color/controls_tint_light"
+            android:scaleType="center"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"/>
+
+        <ImageButton
+            android:id="@+id/play"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="center"
+            android:src="@drawable/musicplayer_play"
+            android:tint="@color/colorAccent"
+            android:layout_centerHorizontal="true"/>
+
+        <ImageButton
+            android:id="@+id/add"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_add"
+            android:tint="@color/controls_tint_light"
+            android:scaleType="center"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"/>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
