@@ -1,9 +1,10 @@
 # Radio
-
+ ![Icône](/app/src/main/res/mipmap-xhdpi/ic_launcher.png)
 
 Internet radio for android.
 
-[![Codacy Badge](https://api.codacy.com/project/badge/grade/3297d1140d784847a1c617da31a86c51)](https://www.codacy.com/app/icare-slak/Radio)
+
+[![Codacy Badge](https://api.codacy.com/project/badge/grade/9e961f610d6d4d18a66ef6be68bccf20)](https://www.codacy.com/app/icare-slak/Radio2)
 
 [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
 
@@ -16,7 +17,7 @@ Pre-requisites
 Screenshots
 -----------
 
-![Phone](screenshot/screen.png)
+![Phone](screenshot/screen.jpg)
 
 License
 -------
