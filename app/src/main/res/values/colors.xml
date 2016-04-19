@@ -5,10 +5,6 @@
     <color name="colorPrimaryDark">#333638</color>
     <color name="colorAccent">#ec9e24</color>
 
-    <color name="cardColor">@android:color/white</color>
-    <color name="cardPlayingColor">#ffe3a0</color>
-    <color name="cardBorderColor">#ccc</color>
-
 
     <color name="controls_bg_light">#fffafafa</color>
     <color name="controls_bg_dark">#ff212121</color>

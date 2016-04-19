@@ -13,16 +13,16 @@
     android:layout_height="@dimen/affichage_info">
     <TextView
         android:id="@+id/station"
-        android:layout_width="270dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:text="Radio"
         android:textColor="@color/primary_text"
         android:textSize="36dp"
         android:typeface="normal"
         android:gravity="center_horizontal"
-        android:layout_marginTop="5dp"
         android:layout_centerHorizontal="true"/>
-
 
 
     <TextView
@@ -30,43 +30,42 @@
         android:layout_width="95dp"
         android:layout_height="wrap_content"
         android:text="en attente"
-        android:textColor="@color/secondary_text"
-        android:textSize="12dp"
+        android:textColor="@color/colorAccent"
+        android:textSize="14dp"
         android:typeface="normal"
         android:textStyle="italic"
         android:textAlignment="center"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="65dp"
         android:layout_centerHorizontal="true"/>
-
 
     <ImageView
         android:id="@+id/icon_equalizer"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:src="@drawable/ic_equalizer0"
-        android:tint="@color/secondary_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_equalizer0"
         android:layout_marginTop="62dp"
-        android:layout_marginLeft="45dp"/>
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="25dp" />
 
     <TextView
         android:id="@+id/bitrate"
-        android:layout_width="40dp"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:text="0kb/s"
         android:textColor="@color/secondary_text"
-        android:textSize="8dp"
+        android:textSize="12dp"
         android:typeface="normal"
-        android:layout_marginTop="69dp"
-        android:layout_marginLeft="67dp" />
+        android:layout_marginTop="68dp"
+        android:layout_marginLeft="52dp" />
 
     <ImageView
         android:id="@+id/icon_volume"
-        android:layout_width="32dp"
-        android:layout_height="25dp"
-        android:src="@drawable/volume0"
-        android:tint="@color/secondary_text"
-        android:layout_marginTop="58dp"
-        android:layout_marginLeft="285dp"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/volume0"
+        android:layout_marginTop="62dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="25dp"/>
 
 </RelativeLayout>
 
@@ -89,7 +88,7 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:background="@color/cardBorderColor"
+            android:background="@color/appwidget_bg"
             tools:ignore="ContentDescription" />
 
 

@@ -16,7 +16,7 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:background="@color/cardBorderColor"
+            android:background="@color/appwidget_bg"
             tools:ignore="ContentDescription" />
 
 

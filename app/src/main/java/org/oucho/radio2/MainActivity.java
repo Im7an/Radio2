@@ -485,13 +485,14 @@ public class MainActivity extends AppCompatActivity implements
             public void onClick(DialogInterface dialog, int id) {
                 String url = editTextUrl.getText().toString();
                 String name = editTextName.getText().toString();
-                if(url.equals("") || url.equals("http://")) {
+                if("".equals(url) || "http://".equals(url)) {
                     Toast.makeText(context, R.string.errorInvalidURL, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(name.equals("")) name = url;
+                if("".equals(name))
+                    name = url;
 
-                if(oldRadio!=null) {
+                if(oldRadio != null) {
                     Radio.deleteRadio(oldRadio);
                 }
 
@@ -534,10 +535,16 @@ public class MainActivity extends AppCompatActivity implements
         ImageView button = (ImageView) findViewById(R.id.play);
 
         if ("stop".equals(etat_lecture)) {
+
             equalizer.setBackground(getDrawable(R.drawable.ic_equalizer0));
+
+
             button.setImageResource(R.drawable.musicplayer_play);
         } else {
-            equalizer.setBackground(getDrawable(R.drawable.ic_equalizer));
+
+            equalizer.setBackground(getDrawable(R.drawable.ic_equalizer1));
+
+
             button.setImageResource(R.drawable.musicplayer_pause);
         }
     }
@@ -632,10 +639,20 @@ public class MainActivity extends AppCompatActivity implements
                 long total = current - received;
 
                 long ByteToBit = total * 8;
-                String bitrate = String.valueOf(ByteToBit);
 
                 TextView BitRate = (TextView) findViewById(R.id.bitrate);
-                BitRate.setText(bitrate + " kb/s");
+
+                if (ByteToBit <= 1024 ) {
+
+                    String bitrate = String.valueOf(ByteToBit);
+                    BitRate.setText(bitrate + " Kb/s");
+
+                } else {
+                    long megaBit = ByteToBit / 1024;
+                    String bitrate = String.valueOf(megaBit);
+                    BitRate.setText(bitrate + " Mb/s");
+                }
+
             }
         }, 1000);
     }

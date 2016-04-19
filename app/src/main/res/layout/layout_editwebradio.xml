@@ -13,8 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textUri"
-            android:hint="@string/url"
-            android:text="http://" >
+            android:hint="@string/url" >
             <requestFocus />
         </EditText>
     </android.support.design.widget.TextInputLayout>
