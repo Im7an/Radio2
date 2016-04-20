@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import org.oucho.radio2.PlayerService;
+import org.oucho.radio2.State;
 
 public class StopReceiver extends BroadcastReceiver {
 
@@ -35,14 +36,14 @@ public class StopReceiver extends BroadcastReceiver {
         }
 
 
-        if ("org.oucho.radio2.STOP".equals(state)) {
+        if ("org.oucho.radio2.STOP".equals(state) && State.isPlaying()) {
+
 
             String halt = intent.getStringExtra("halt");
 
             Intent player = new Intent(context, PlayerService.class);
             player.putExtra("action", halt);
             context.startService(player);
-
         }
     }
 }
