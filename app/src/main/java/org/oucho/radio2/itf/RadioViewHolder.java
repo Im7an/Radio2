@@ -5,24 +5,21 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.oucho.radio2.MainActivity;
 import org.oucho.radio2.R;
 
-public class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-    private TextView text;
-    private ImageView image;
-    private ImageButton menu;
+class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private final TextView text;
+    private final ImageButton menu;
     private Radio radio;
-    private MainActivity activity;
-    private ListsClickListener clickListener;
+    private final MainActivity activity;
+    private final ListsClickListener clickListener;
 
     public RadioViewHolder(View view, MainActivity activity, ListsClickListener clickListener) {
         super(view);
         text = (TextView)view.findViewById(R.id.textViewRadio);
-        image = (ImageView)view.findViewById(R.id.imageViewRadio);
         menu = (ImageButton)view.findViewById(R.id.buttonMenu);
         this.activity = activity;
         this.clickListener = clickListener;
@@ -31,16 +28,9 @@ public class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnC
         menu.setFocusable(false);
     }
 
-    public void update(Radio radio, Radio playingRadio) {
+    public void update(Radio radio) {
         this.radio = radio;
         text.setText(radio.getTitle());
-/*        if(radio.equals(playingRadio)) {
-            card.setBackgroundResource(R.drawable.card_playing);
-            image.setImageResource(R.drawable.play_orange);
-        } else {
-            card.setBackgroundResource(R.drawable.card);
-            image.setImageResource(R.drawable.radio);
-        }*/
     }
 
     @Override

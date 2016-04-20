@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import org.oucho.radio2.MainActivity;
 
-public class RadiosDatabase extends SQLiteOpenHelper {
+class RadiosDatabase extends SQLiteOpenHelper {
 	private static final String DB_NAME = "WebRadio";
 	private static final int DB_VERSION = 1;
 	

@@ -3,17 +3,12 @@ package org.oucho.radio2.itf;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-
-import org.oucho.radio2.MainActivity;
-import org.oucho.radio2.R;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Radio implements PlayableItem {
-	private String url;
-	private String name;
+	private final String url;
+	private final String name;
 
 	public Radio(String url, String name) {
 		this.url = url;
@@ -49,7 +44,7 @@ public class Radio implements PlayableItem {
 		values.put("name", radio.name);
 		try {
 			db.insertOrThrow("WebRadio", null, values);
-		} catch(Exception e) {
+		} catch(Exception ignored) {
 		} finally {
 			db.close();
 		}
@@ -68,57 +63,8 @@ public class Radio implements PlayableItem {
 	}
 
 	@Override
-	public String getArtist() {
-		return "[" + MainActivity.getContext().getResources().getString(R.string.app_name) +"]";
-	}
-
-	@Override
 	public String getPlayableUri() {
 		return url;
 	}
-	
-	@Override
-	public boolean hasImage() {
-		return false;
-	}
-	
-	@Override
-	public Bitmap getImage() {
-		return null;
-	}
 
-	@Override
-	public PlayableItem getNext(boolean repeatAll) {
-		return null;
-	}
-
-	@Override
-	public PlayableItem getPrevious() {
-		return null;
-	}
-
-	@Override
-	public PlayableItem getRandom(Random random) {
-		return null;
-	}
-
-	@Override
-	public boolean isLengthAvailable() {
-		return false;
-	}
-	
-	@Override
-	public ArrayList<Information> getInformation() {
-		ArrayList<Information> info = new ArrayList<>();
-		info.add(new Information(R.string.radio_name, name));
-		info.add(new Information(R.string.url, url));
-		return info;
-	}
-	
-	@Override
-	public boolean equals(Object o) {
-		if(!(o instanceof Radio)) return false;
-		Radio r2 = (Radio)o;
-		return url.equals(r2.getUrl());
-	}
 }

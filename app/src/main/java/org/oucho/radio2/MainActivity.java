@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements
     private static final String STOP = "stop";
     private static final String STATE = "org.oucho.radio2.STATE";
 
-    private static final int USER_SETTINGS_REQUEST = 10;
+    //private static final int USER_SETTINGS_REQUEST = 10;
     private static final int NOTIF_ID = 15;
 
     private static final String fichier_préférence = "org.oucho.radio2_preferences";
@@ -89,17 +89,9 @@ public class MainActivity extends AppCompatActivity implements
     private Etat_player Etat_player_Receiver;
     private NotificationManager notificationManager;
 
-
-    public Player musicService;
-
-
-    protected LinearLayoutManager layoutManager;
-
-    RecyclerView radioView;
+    private RecyclerView radioView;
 
     private DrawerLayout mDrawerLayout;
-    private NavigationView mNavigationView;
-    private ActionBarDrawerToggle mDrawerToggle;
 
 
     private static boolean running;
@@ -111,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements
      * Création de l'activité
      * ********************************************************************************************/
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,11 +144,12 @@ public class MainActivity extends AppCompatActivity implements
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
+        NavigationView mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
 
+        assert mNavigationView != null;
         mNavigationView.setNavigationItemSelectedListener(this);
 
-        layoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         radioView.setLayoutManager(layoutManager);
 
 
@@ -177,15 +171,8 @@ public class MainActivity extends AppCompatActivity implements
         this.findViewById(R.id.timer).setOnClickListener(this);
         this.findViewById(R.id.play).setOnClickListener(this);
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,toolbar ,  R.string.drawer_open, R.string.drawer_close) {
+        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
 
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-            }
-
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-            }
         };
 
         mDrawerToggle.syncState();
@@ -229,11 +216,13 @@ public class MainActivity extends AppCompatActivity implements
         registerReceiver(Etat_player_Receiver, filter);
 
         TextView nomStation = (TextView) findViewById(R.id.station);
+        assert nomStation != null;
         nomStation.setText(nom_radio);
 
         etat_lecture = préférences.getString("etat", etat_lecture_pref);
 
         TextView myAwesomeTextView = (TextView) findViewById(R.id.etat);
+        assert myAwesomeTextView != null;
         myAwesomeTextView.setText(action_lecteur);
 
         nom_radio = préférences.getString("name", nom_radio_pref);
@@ -250,9 +239,6 @@ public class MainActivity extends AppCompatActivity implements
      * Navigation Drawer
      * ********************************************************************************************/
 
-    public DrawerLayout getDrawerLayout() {
-        return mDrawerLayout;
-    }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -325,7 +311,8 @@ public class MainActivity extends AppCompatActivity implements
         PackageManager pm = context.getPackageManager();
         Intent appStartIntent = pm.getLaunchIntentForPackage("org.oucho.musicplayer");
         context.startActivity(appStartIntent);
-        //killNotif();
+
+        killNotif();
     }
 
     /* *********************************************************************************************
@@ -377,14 +364,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-    public void updateListView() {
-        Radio playingRadio = null;
-        if(getCurrentPlayingItem() instanceof Radio)
-            playingRadio = (Radio)getCurrentPlayingItem();
+    private void updateListView() {
 
         ArrayList<Object> items = new ArrayList<>();
         items.addAll(Radio.getRadios());
-        radioView.setAdapter(new RadioAdapter(this, items, playingRadio, clickListener));
+        radioView.setAdapter(new RadioAdapter(this, items, clickListener));
     }
 
     @Override
@@ -410,12 +394,12 @@ public class MainActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    public ListsClickListener clickListener = new ListsClickListener() {
-        @Override public void onHeaderClick() {}
+
+    private final ListsClickListener clickListener = new ListsClickListener() {
 
         @Override
         public void onPlayableItemClick(PlayableItem item) {
-            play((Radio) item);
+            play((Radio)item);
         }
 
         @Override
@@ -429,10 +413,8 @@ public class MainActivity extends AppCompatActivity implements
                     break;
             }
         }
-
-        @Override public void onCategoryClick(Object object) {}
-        @Override public void onCategoryMenuClick(Object item, int menuId) {}
     };
+
 
     private void play(Radio radio) {
 
@@ -450,9 +432,8 @@ public class MainActivity extends AppCompatActivity implements
         etat_lecture = "play";
         updatePlayStatus();
 
-        gotoPlayingItemPosition(radio);
-
     }
+
 
     private void deleteRadio(final Radio radio) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -508,20 +489,11 @@ public class MainActivity extends AppCompatActivity implements
         dialog.show();
     }
 
-    public void gotoPlayingItemPosition(PlayableItem playingItem) {
-        int position = ((RadioAdapter)radioView.getAdapter()).getPlayableItemPosition(playingItem);
-        layoutManager.scrollToPosition(position);
-    }
-
     public static Context getContext() {
         return context;
     }
 
-    public PlayableItem getCurrentPlayingItem() {
-        if(musicService==null);
-        return null;
-        //return musicService.getCurrentPlayingItem();
-    }
+
 
 
 
@@ -529,6 +501,7 @@ public class MainActivity extends AppCompatActivity implements
      * Fcontionnalités sur l'afficheur
      * ********************************************************************************************/
 
+    @SuppressWarnings("ConstantConditions")
     private void updatePlayStatus() {
         ImageView equalizer = (ImageView) findViewById(R.id.icon_equalizer);
 
@@ -594,16 +567,22 @@ public class MainActivity extends AppCompatActivity implements
         ImageView play = (ImageView) findViewById(R.id.icon_volume);
 
         if (currentVolume == 0) {
+            assert play != null;
             play.setBackground(getDrawable(R.drawable.volume0));
         } else if (currentVolume < 4) {
+            assert play != null;
             play.setBackground(getDrawable(R.drawable.volume1));
         } else if (currentVolume < 7) {
+            assert play != null;
             play.setBackground(getDrawable(R.drawable.volume2));
         } else if (currentVolume < 10) {
+            assert play != null;
             play.setBackground(getDrawable(R.drawable.volume3));
         } else if (currentVolume < 13) {
+            assert play != null;
             play.setBackground(getDrawable(R.drawable.volume4));
         } else if (currentVolume < 16) {
+            assert play != null;
             play.setBackground(getDrawable(R.drawable.volume5));
         }
     }
@@ -645,11 +624,13 @@ public class MainActivity extends AppCompatActivity implements
                 if (ByteToBit <= 1024 ) {
 
                     String bitrate = String.valueOf(ByteToBit);
+                    assert BitRate != null;
                     BitRate.setText(bitrate + " Kb/s");
 
                 } else {
                     long megaBit = ByteToBit / 1024;
                     String bitrate = String.valueOf(megaBit);
+                    assert BitRate != null;
                     BitRate.setText(bitrate + " Mb/s");
                 }
 
@@ -670,6 +651,7 @@ public class MainActivity extends AppCompatActivity implements
 
             TextView status = (TextView) findViewById(R.id.etat);
             String action_lecteur = intent.getStringExtra("state");
+            assert status != null;
             status.setText(action_lecteur);
 
             SharedPreferences.Editor editor = préférences.edit();
@@ -684,6 +666,7 @@ public class MainActivity extends AppCompatActivity implements
 
             TextView StationTextView = (TextView) findViewById(R.id.station);
             String lecture = intent.getStringExtra("name");
+            assert StationTextView != null;
             StationTextView.setText(lecture);
 
             nom_radio = préférences.getString("name", nom_radio_pref);
@@ -787,7 +770,10 @@ public class MainActivity extends AppCompatActivity implements
                 long secondes = seconds;
 
                 secondes = secondes / 1000;
-                timeLeft.setText(String.format(getString(R.string.timer_info), (secondes / 3600), ((secondes % 3600) / 60), ((secondes % 3600) % 60)));
+
+                String textTemps = String.format(getString(R.string.timer_info), (secondes / 3600), ((secondes % 3600) / 60), ((secondes % 3600) % 60));
+
+                timeLeft.setText(textTemps);
             }
 
             @Override
@@ -847,7 +833,7 @@ public class MainActivity extends AppCompatActivity implements
         running = true;
     }
 
-    public static void stopTimer() {
+    private static void stopTimer() {
         if (running) mTask.cancel(true);
 
         running = false;
@@ -882,11 +868,7 @@ public class MainActivity extends AppCompatActivity implements
         builder.setOngoing(true);
 
         Boolean unlock;
-        if ("play".equals(etat_lecture)) {
-            unlock = true;
-        } else {
-            unlock = false;
-        }
+        unlock = "play".equals(etat_lecture);
         builder.setOngoing(unlock);
 
         Notification notification = builder.build();

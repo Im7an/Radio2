@@ -11,17 +11,15 @@ import org.oucho.radio2.R;
 import java.util.ArrayList;
 
 public class RadioAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private MainActivity activity;
-    private ArrayList<Object> items;
-    private LayoutInflater inflater;
-    private PlayableItem playingItem;
-    private ListsClickListener clickListener;
+    private final MainActivity activity;
+    private final ArrayList<Object> items;
+    private final LayoutInflater inflater;
+    private final ListsClickListener clickListener;
 
 
-    public RadioAdapter(MainActivity activity, ArrayList<Object> items, PlayableItem playingItem, ListsClickListener clickListener) {
+    public RadioAdapter(MainActivity activity, ArrayList<Object> items, ListsClickListener clickListener) {
         this.activity = activity;
         this.items = items;
-        this.playingItem = playingItem;
         this.clickListener = clickListener;
         inflater = activity.getLayoutInflater();
     }
@@ -38,24 +36,8 @@ public class RadioAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Object item = items.get(position);
 
-        ((RadioViewHolder) holder).update((Radio)item, (Radio)playingItem);
+        ((RadioViewHolder) holder).update((Radio)item);
 
-    }
-
-    public int getPlayableItemPosition(PlayableItem item) {
-        return items.indexOf(item);
-    }
-
-    public void swapItems(int from, int to) {
-        Object item = items.remove(from);
-        items.add(to, item);
-        notifyItemMoved(from, to);
-    }
-
-    public Object deleteItem(int position) {
-        Object item = items.remove(position);
-        notifyItemRemoved(position);
-        return item;
     }
 
     @Override

@@ -23,8 +23,8 @@ package org.oucho.radio2;
 import android.content.Context;
 import android.content.Intent;
 
-public class State
-{
+public class State {
+
    private static final String intent_state = "org.oucho.radio2.STATE";
 
    public static final String STATE_STOP         = "Stop";
@@ -40,8 +40,8 @@ public class State
 
    //private static boolean current_isNetworkUrl = false;
 
-   public static void setState(Context context, String s)
-   {
+   public static void setState(Context context, String s) {
+
       if ( s == null )
          return;
 
@@ -58,11 +58,12 @@ public class State
    }
 
 
-   public static boolean is(String s)
-      { return current_state.equals(s); }
+   public static boolean is(String s) {
+       return current_state.equals(s);
+   }
 
-   public static String text()
-   {
+   public static String text() {
+
       if (is(STATE_STOP))
           return "Stop";
 
@@ -93,13 +94,16 @@ public class State
 
    // Paused is not in any of the following classes.
    //
-   public static boolean isPlaying()
-      { return is(STATE_PLAY) || is(STATE_BUFFER) || is(STATE_DUCK); }
+   public static boolean isPlaying() {
+       return is(STATE_PLAY) || is(STATE_BUFFER) || is(STATE_DUCK);
+   }
 
-   public static boolean isStopped()
-      { return State.is(STATE_STOP) || State.is(STATE_ERROR) || State.is(STATE_COMPLETE); }
+   public static boolean isStopped() {
+       return State.is(STATE_STOP) || State.is(STATE_ERROR) || State.is(STATE_COMPLETE);
+   }
 
-   public static boolean isWantPlaying()
-      { return isPlaying() || is(STATE_ERROR); }
+   public static boolean isWantPlaying() {
+       return isPlaying() || is(STATE_ERROR);
+   }
 }
 

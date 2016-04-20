@@ -32,8 +32,8 @@ import android.net.Uri;
 import org.oucho.radio2.net.HttpGetter;
 import org.oucho.radio2.utils.Counter;
 
-public class Playlist extends AsyncTask<Void, Void, String>
-{
+public class Playlist extends AsyncTask<Void, Void, String> {
+
    private static final int max_ttl = 10;
 
    private static final int NONE    = 0;
@@ -49,21 +49,21 @@ public class Playlist extends AsyncTask<Void, Void, String>
     private static final String url_regex = "\\(?\\b(http://|www[.])[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]";
     private static Pattern url_pattern = null;
 
-   Playlist(Player a_player, String a_url)
-   {
+   Playlist(Player a_player, String a_url) {
+
       super();
       player = a_player;
       start_url = a_url;
       then = Counter.now();
    }
 
-   public Playlist start()
-   {
-      return (Playlist) executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+   public Playlist start() {
+
+       return (Playlist) executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
    }
 
-   protected String doInBackground(Void... args)
-   {
+   protected String doInBackground(Void... args) {
+
       String url = start_url;
       int ttl = max_ttl;
       int type = NONE;
@@ -74,8 +74,8 @@ public class Playlist extends AsyncTask<Void, Void, String>
          url = null;
 
        //noinspection ConstantConditions
-       if ( 0 < ttl && url != null && type != NONE )
-      {
+       if ( 0 < ttl && url != null && type != NONE ) {
+
          ttl -= 1;
 
          url = selectUrlFromPlaylist(url,type);
@@ -97,31 +97,30 @@ public class Playlist extends AsyncTask<Void, Void, String>
          player.playLaunch(url);
      }
 
-   private static String filter(String line, int type)
-   {
-      switch (type)
-      {
-         //
+   private static String filter(String line, int type) {
+
+      switch (type) {
+
          case M3U:
             return line.indexOf('#') == 0 ? "" : line;
-         //
+
          case PLS:
             if ( line.startsWith("File") && 0 < line.indexOf('=') )
                return line;
             return "";
-         //
+
          default:
             return line;
       }
    }
 
 
-   private String selectUrlFromPlaylist(String url, int type)
-   {
+   private String selectUrlFromPlaylist(String url, int type) {
+
       List<String> lines = HttpGetter.httpGet(url);
 
-      for (int i=0; i<lines.size(); i+= 1)
-      {
+      for (int i=0; i<lines.size(); i+= 1) {
+
          String line = lines.get(i);
          line = filter(line.trim(),type);
          lines.set(i, line);
@@ -141,22 +140,24 @@ public class Playlist extends AsyncTask<Void, Void, String>
 
 
 
-   private static ArrayList selectUrlsFromList(List<String> lines)
-   {
+   private static ArrayList selectUrlsFromList(List<String> lines) {
+
       ArrayList links = new ArrayList<>();
 
       if ( url_pattern == null )
          url_pattern = Pattern.compile(url_regex);
 
-      for (int i=0; i<lines.size(); i+=1)
-      {
+      for (int i=0; i<lines.size(); i+=1)  {
+
          String line = lines.get(i);
-         if ( 0 < line.length() )
-         {
+
+         if ( 0 < line.length() ) {
             Matcher matcher = url_pattern.matcher(line);
-            if ( matcher.find() )
-            {
+
+            if ( matcher.find() ) {
+
                String link = matcher.group();
+
                if (link.startsWith("(") && link.endsWith(")"))
                   link = link.substring(1, link.length() - 1);
 
@@ -169,15 +170,16 @@ public class Playlist extends AsyncTask<Void, Void, String>
       return links;
    }
 
-   private static Uri parseUri(String url)
-      { return Uri.parse(url); }
+   private static Uri parseUri(String url) {
+       return Uri.parse(url);
+   }
 
-   private static boolean isSuffix(String text, String suffix)
-      { return text != null && text.endsWith(suffix) ; }
+   private static boolean isSuffix(String text, String suffix) {
+       return text != null && text.endsWith(suffix) ;
+   }
 
    private static boolean isSomeSuffix(String url, String suffix) {
        return isSuffix(url, suffix) || isSuffix(parseUri(url).getPath(), suffix);
-
    }
 
    private static int playlistType(String url) {

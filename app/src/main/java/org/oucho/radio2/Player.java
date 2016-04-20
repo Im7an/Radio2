@@ -66,8 +66,8 @@ public class Player extends Service
    private static String intent_pause = null;
    private static String intent_restart = null;
 
-   private static String default_url = null;
-   private static String default_name = null;
+   private static final String default_url = null;
+   private static final String default_name = null;
    public  static String name = null;
    public  static String url = null;
 
@@ -79,7 +79,7 @@ public class Player extends Service
    private static AsyncTask<Integer,Void,Void> pause_task = null;
 
    private static Connectivity connectivity = null;
-   private static int initial_failure_ttl = 5;
+   private static final int initial_failure_ttl = 5;
    private static int failure_ttl = 0;
 
    private static String launch_url = null;
@@ -98,7 +98,7 @@ public class Player extends Service
       intent_pause = "pause";
       intent_restart = "restart";
 
-      préférences = getSharedPreferences(fichier_préférence, context.MODE_PRIVATE);
+      préférences = getSharedPreferences(fichier_préférence, MODE_PRIVATE);
       url = préférences.getString("url", default_url);
       name = préférences.getString("name", default_name);
 
@@ -107,12 +107,12 @@ public class Player extends Service
 
    }
 
-   public void onDestroy()
-   {
+   public void onDestroy() {
+
       stop();
 
-      if ( player != null )
-      {
+      if ( player != null ) {
+
          Intent i = new Intent(this, AudioEffectsReceiver.class);
          i.setAction(AudioEffectsReceiver.ACTION_CLOSE_AUDIO_EFFECT_SESSION);
          sendBroadcast(i);
@@ -121,8 +121,8 @@ public class Player extends Service
          player = null;
       }
 
-      if ( connectivity != null )
-      {
+      if ( connectivity != null ) {
+
          connectivity.destroy();
          connectivity = null;
       }
@@ -132,8 +132,8 @@ public class Player extends Service
 
 
    @Override
-   public int onStartCommand(Intent intent, int flags, int startId)
-   {
+   public int onStartCommand(Intent intent, int flags, int startId) {
+
       if ( intent == null || ! intent.hasExtra("action") )
          return done();
 
@@ -158,7 +158,7 @@ public class Player extends Service
       return done();
    }
 
-    public int intentPlay(Intent intent) {
+    private int intentPlay(Intent intent) {
 
         if ( intent.hasExtra("url") )
             url = intent.getStringExtra("url");
@@ -169,41 +169,40 @@ public class Player extends Service
         Editor editor = préférences.edit();
         editor.putString("url", url);
         editor.putString("name", name);
-        editor.commit();
+        editor.apply();
 
         failure_ttl = initial_failure_ttl;
         return play(url);
-
     }
 
-   public int play()
-      { return play(url); }
+   public int play() {
+       return play(url);
+   }
 
-   private int play(String url)
-   {
+   private int play(String url) {
+
       stop(false);
 
 
-      if ( ! URLUtil.isValidUrl(url) )
-      {
+      if ( ! URLUtil.isValidUrl(url) ) {
          return stop();
       }
 
-      if ( isNetworkUrl(url) && ! connectivity.isConnected(context) )
-      {
+      if ( isNetworkUrl(url) && ! Connectivity.isConnected(context) ) {
+
          connectivity.dropped_connection();
          return done();
       }
 
       int focus = audio_manager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-      if ( focus != AudioManager.AUDIOFOCUS_REQUEST_GRANTED )
-      {
+      if ( focus != AudioManager.AUDIOFOCUS_REQUEST_GRANTED ) {
+
          return stop();
       }
 
 
-      if ( player == null )
-      {
+      if ( player == null ) {
+
          player = new MediaPlayer();
          player.setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK);
          player.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -229,12 +228,10 @@ public class Player extends Service
    }
 
 
-   public int playLaunch(String url)
-   {
+   public int playLaunch(String url) {
 
       launch_url = null;
-      if ( ! URLUtil.isValidUrl(url) )
-      {
+      if ( ! URLUtil.isValidUrl(url) ) {
          return stop();
       }
 
@@ -244,24 +241,25 @@ public class Player extends Service
       if ( isNetworkUrl(url) )
          WifiLocker.lock(context, app_name);
 
-      try
-      {
+      try {
+
          player.setVolume(1.0f, 1.0f);
          player.setDataSource(context, Uri.parse(url));
          player.prepareAsync();
+
+      } catch (Exception e) {
+          return stop();
       }
-      catch (Exception e)
-         { return stop(); }
 
       start_buffering();
       return done(State.STATE_BUFFER);
    }
 
    @Override
-   public void onPrepared(MediaPlayer mp)
-   {
-      if ( mp.equals(player) )
-      {
+   public void onPrepared(MediaPlayer mp) {
+
+      if ( mp.equals(player) ) {
+
          player.start();
          Counter.timePasses();
          failure_ttl = initial_failure_ttl;
@@ -269,25 +267,27 @@ public class Player extends Service
       }
    }
 
-   public boolean isNetworkUrl()
-      { return isNetworkUrl(launch_url); }
+   public boolean isNetworkUrl() {
+       return isNetworkUrl(launch_url);
+   }
 
-   public boolean isNetworkUrl(String check_url)
-      { return ( check_url != null && URLUtil.isNetworkUrl(check_url) ); }
+   private boolean isNetworkUrl(String check_url) {
+       return ( check_url != null && URLUtil.isNetworkUrl(check_url) );
+   }
 
-   public int stop()
-      { return stop(true); }
+   public int stop() {
+       return stop(true);
+   }
 
-   private int stop(boolean update_state)
-   {
+   private int stop(boolean update_state) {
 
       Counter.timePasses();
       launch_url = null;
       audio_manager.abandonAudioFocus(this);
       WifiLocker.unlock();
 
-      if ( player != null )
-      {
+      if ( player != null ) {
+
          if ( player.isPlaying() )
             player.stop();
          player.reset();
@@ -295,8 +295,8 @@ public class Player extends Service
          player = null;
       }
 
-      if ( playlist_task != null )
-      {
+      if ( playlist_task != null ) {
+
          playlist_task.cancel(true);
          playlist_task = null;
       }
@@ -307,12 +307,11 @@ public class Player extends Service
          return done();
    }
 
-   /* ********************************************************************
+   /************************************************************************************************
     * Reduce volume, for a short while, for a notification.
-    */
+    ***********************************************************************************************/
 
-    private int duck(String msg)
-    {
+    private int duck(String msg) {
 
         if ( State.is(State.STATE_DUCK) || ! State.isPlaying() )
             return done();
@@ -321,11 +320,11 @@ public class Player extends Service
         return done(State.STATE_DUCK);
     }
 
-    /* ********************************************************************
+    /***********************************************************************************************
      * Pause/restart...
-     */
-   private int pause()
-   {
+     **********************************************************************************************/
+   private int pause() {
+
       if ( player == null || State.is(State.STATE_PAUSE) || ! State.isPlaying() )
          return done();
 
@@ -347,8 +346,8 @@ public class Player extends Service
       return done(State.STATE_PAUSE);
    }
 
-   private int restart()
-   {
+   private int restart() {
+
       if ( player == null || State.isStopped() )
          return play();
 
@@ -361,31 +360,31 @@ public class Player extends Service
          return done(State.STATE_PLAY);
 
       int focus = audio_manager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-      if ( focus != AudioManager.AUDIOFOCUS_REQUEST_GRANTED )
-      {
+      if ( focus != AudioManager.AUDIOFOCUS_REQUEST_GRANTED ) {
          return done();
       }
 
-      if ( pause_task != null )
-         { pause_task.cancel(true); pause_task = null; }
+      if ( pause_task != null ) {
+          pause_task.cancel(true); pause_task = null;
+      }
 
       player.start();
       return done(State.STATE_PLAY);
    }
 
-   private int done(String state)
-   {
+   private int done(String state) {
+
       if ( state != null )
          State.setState(context, state);
       return done();
    }
 
-   private int done()
-      { return START_NOT_STICKY; }
+   private int done() {
+       return START_NOT_STICKY;
+   }
 
    @Override
-   public void onBufferingUpdate(MediaPlayer player, int percent)
-   {
+   public void onBufferingUpdate(MediaPlayer player, int percent) {
       /*
       // Notifications of buffer state seem to be unreliable.
       if ( 0 <= percent && percent <= 100 )
@@ -394,8 +393,7 @@ public class Player extends Service
    }
 
    @Override
-   public boolean onInfo(MediaPlayer player, int what, int extra)
-   {
+   public boolean onInfo(MediaPlayer player, int what, int extra) {
 
       switch (what) {
          case MediaPlayer.MEDIA_INFO_BUFFERING_START:
@@ -414,19 +412,17 @@ public class Player extends Service
    }
 
 
-   private void start_buffering()
-   {
+   private void start_buffering() {
+
       if ( start_buffering_task != null )
          start_buffering_task.cancel(true);
 
       // We'll give it 90 seconds for the stream to start.  Otherwise, we'll
       // declare an error.  onError() tries to restart, in some cases.
-      start_buffering_task = (Later)
-         new Later(90)
-         {
+      start_buffering_task = (Later) new Later(90) {
+
             @Override
-            public void later()
-            {
+            public void later() {
                start_buffering_task = null;
                onError(null,0,0);
             }
@@ -434,30 +430,29 @@ public class Player extends Service
    }
 
 
-   private void stop_soon()
-   {
+   private void stop_soon() {
+
       if ( stopSoonTask != null )
           stopSoonTask.cancel(true);
 
-       stopSoonTask = (Later)
-         new Later(300)
-         {
+       stopSoonTask = (Later) new Later(300) {
+
             @Override
-            public void later()
-            {
+            public void later() {
                 stopSoonTask = null;
                stop();
             }
          }.start();
    }
 
-   private void tryRecover()
-   {
+   private void tryRecover() {
+
       stop_soon();
-      if ( isNetworkUrl() && 0 < failure_ttl )
-      {
+
+      if ( isNetworkUrl() && 0 < failure_ttl ) {
          failure_ttl -= 1;
-         if ( connectivity.isConnected(context) )
+
+         if ( Connectivity.isConnected(context) )
             play();
          else
             connectivity.dropped_connection();
@@ -465,8 +460,7 @@ public class Player extends Service
    }
 
    @Override
-   public boolean onError(MediaPlayer player, int what, int extra)
-   {
+   public boolean onError(MediaPlayer player, int what, int extra) {
       State.setState(context,State.STATE_ERROR);
        tryRecover(); // This calls stop_soon().
 
@@ -475,8 +469,7 @@ public class Player extends Service
    }
 
    @Override
-   public void onCompletion(MediaPlayer mp)
-   {
+   public void onCompletion(MediaPlayer mp) {
 
       if ( ! isNetworkUrl() && (State.is(State.STATE_PLAY) || State.is(State.STATE_DUCK)) )
          State.setState(context, State.STATE_COMPLETE);
@@ -485,12 +478,11 @@ public class Player extends Service
    }
 
    @Override
-   public void onAudioFocusChange(int change)
-   {
+   public void onAudioFocusChange(int change) {
 
       if ( player != null )
-         switch (change)
-         {
+         switch (change) {
+
             case AudioManager.AUDIOFOCUS_GAIN:
                restart();
                break;
@@ -510,11 +502,11 @@ public class Player extends Service
 
              default: //do nothing
                  break;
-
          }
    }
 
    @Override
-   public IBinder onBind(Intent intent)
-      { return null; }
+   public IBinder onBind(Intent intent) {
+       return null;
+   }
 }

@@ -24,13 +24,16 @@ public class Counter
 {
    private static volatile int counter = 1;
 
-   public static int now()
-      { return counter; }
+   public static int now() {
+      return counter;
+   }
 
-   public static void timePasses()
-      { counter += 1; }
+   public static void timePasses() {
+       counter += 1;
+   }
 
-   public static boolean still(int then)
-      { return then == now(); }
+   public static boolean still(int then) {
+       return then == now();
+   }
 }
 

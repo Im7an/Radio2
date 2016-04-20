@@ -29,7 +29,7 @@ public abstract class Later extends AsyncTask<Integer, Void, Void>
    private static final int default_seconds = 120;
    private int seconds = default_seconds;
 
-   private int then;
+   private final int then;
 
    public abstract void later();
 
@@ -54,7 +54,7 @@ public abstract class Later extends AsyncTask<Integer, Void, Void>
    protected Void doInBackground(Integer... args)
    {
       try { if ( 0 < seconds ) Thread.sleep(seconds * 1000); }
-      catch ( Exception e ) { }
+      catch ( Exception ignored) { }
       return null;
    }
 

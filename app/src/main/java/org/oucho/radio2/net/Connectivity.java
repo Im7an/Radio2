@@ -138,8 +138,7 @@ public class Connectivity extends BroadcastReceiver
       previous_type = type;
    }
 
-   public void dropped_connection()
-   {  // We've lost connectivity.
+   public void dropped_connection() {  // We've lost connectivity.
       player.stop();
       then = Counter.now();
       State.setState(context, State.STATE_DISCONNECTED);
@@ -147,22 +146,17 @@ public class Connectivity extends BroadcastReceiver
       if ( disable_task != null )
          disable_task.cancel(true);
 
-      disable_task =
-         new Later(300)
-         {
+      disable_task = new Later(300) {
             @Override
-            public void later()
-            {
+            public void later() {
                player.stop();
                disable_task = null;
             }
          }.start();
    }
 
-   private void restart()
-   {
-      if ( disable_task != null )
-      {
+   private void restart() {
+      if ( disable_task != null ) {
          disable_task.cancel(true);
          disable_task = null;
       }

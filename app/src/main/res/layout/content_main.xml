@@ -19,7 +19,7 @@
         android:layout_marginRight="10dp"
         android:text="Radio"
         android:textColor="@color/primary_text"
-        android:textSize="36dp"
+        android:textSize="36sp"
         android:typeface="normal"
         android:gravity="center_horizontal"
         android:layout_centerHorizontal="true"/>
@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:text="en attente"
         android:textColor="@color/colorAccent"
-        android:textSize="14dp"
+        android:textSize="14sp"
         android:typeface="normal"
         android:textStyle="italic"
         android:textAlignment="center"
@@ -53,7 +53,7 @@
         android:layout_height="wrap_content"
         android:text="0kb/s"
         android:textColor="@color/secondary_text"
-        android:textSize="12dp"
+        android:textSize="12sp"
         android:typeface="normal"
         android:layout_marginTop="68dp"
         android:layout_marginLeft="52dp" />

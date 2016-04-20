@@ -17,7 +17,7 @@ public class HttpGetter
    public static List<String> httpGet(String str)
    {
       HttpURLConnection connection = null;
-      List<String> lines = new ArrayList<String>();
+      List<String> lines = new ArrayList<>();
 
       try
       {
