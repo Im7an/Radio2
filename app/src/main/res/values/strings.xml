@@ -8,7 +8,7 @@
     <string name="delete">supprimer</string>
 
     <string name="deleteRadioConfirm">Supprimer cette radio ?</string>
-    <string name="addRadio">Add radio</string>
+    <string name="addRadio">Ajouter une radio</string>
     <string name="ok">Ok</string>
     <string name="errorInvalidURL">Veuillez entrer une adresse valide</string>
 
