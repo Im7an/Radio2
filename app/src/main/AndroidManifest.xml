@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+
     <application
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -30,14 +31,17 @@
         <service android:name=".PlayerService" />
 
 
-        <receiver android:name=".utils.Notification">
+        <receiver android:name=".utils.StopReceiver"
+            android:exported="true" >
 
             <intent-filter>
                 <action android:name="org.oucho.radio2.STATE"/>
+
                 <action android:name="org.oucho.radio2.STOP"/>
             </intent-filter>
 
         </receiver>
+
     </application>
 
 </manifest>

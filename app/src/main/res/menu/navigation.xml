@@ -7,11 +7,6 @@
     <group>
 
         <item
-            android:id="@+id/action_sleep_timer"
-            android:icon="@drawable/ic_sleep_timer"
-            android:title="@string/action_sleep_timer" />
-
-        <item
             android:id="@+id/action_musique"
             android:icon="@drawable/ic_music"
             android:title="@string/musique" />

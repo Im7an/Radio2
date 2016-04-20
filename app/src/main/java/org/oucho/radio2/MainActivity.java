@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
 
-        State.get_state(context);
+        State.getState(context);
 
     }
 
@@ -262,14 +262,14 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.action_musique:
                 musique();
                 break;
-
+/*
             case R.id.action_sleep_timer:
                 if (! running) {
                     showDatePicker();
                 } else {
                     showTimerInfo();
                 }
-                break;
+                break;*/
 
             case R.id.nav_help:
                 about();
@@ -385,6 +385,8 @@ public class MainActivity extends AppCompatActivity implements
                     break;
                 case R.id.menu_delete:
                     deleteRadio((Radio)item);
+                    break;
+                default: //do nothing
                     break;
             }
         }

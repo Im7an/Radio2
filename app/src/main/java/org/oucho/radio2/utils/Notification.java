@@ -3,22 +3,20 @@ package org.oucho.radio2.utils;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.NotificationCompat;
 import android.widget.RemoteViews;
 
 import org.oucho.radio2.MainActivity;
-import org.oucho.radio2.PlayerService;
 import org.oucho.radio2.R;
 
-public class Notification extends BroadcastReceiver  {
+public class Notification {
 
     private static final int NOTIFY_ID = 32;
 
 
-    private static void updateNotification(Context ctx, String nom_radio, String action) {
+    public static void updateNotification(Context ctx, String nom_radio, String action) {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx);
 
@@ -47,28 +45,6 @@ public class Notification extends BroadcastReceiver  {
 
     }
 
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-
-
-        String nom_radio = intent.getStringExtra("name");
-        String action_lecteur = intent.getStringExtra("state");
-
-        updateNotification(context, nom_radio, action_lecteur);
-
-
-        String halt = intent.getStringExtra("halt");
-
-        if ("Stop".equals(halt)) {
-
-            Intent player = new Intent(context, PlayerService.class);
-            player.putExtra("action", "stop");
-            context.startService(player);
-
-        }
-
-    }
 
     public static void removeNotification(Context context) {
 

@@ -33,6 +33,7 @@ public class Radio implements PlayableItem {
         	radios.add(radio);
         }
         db.close();
+        cursor.close();
         return radios;
 	}
 	

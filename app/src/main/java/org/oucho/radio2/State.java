@@ -60,7 +60,7 @@ public class State {
    }
 
 
-    public static void get_state(Context context) {
+    public static void getState(Context context) {
         setState(context, current_state, current_isNetworkUrl);
     }
 

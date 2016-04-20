@@ -7,6 +7,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 
+        <item name="android:colorBackground">@color/white</item>
 
         <item name="android:actionOverflowButtonStyle">@style/OverflowButton</item>
         <item name="actionOverflowButtonStyle">@style/OverflowButton</item>
