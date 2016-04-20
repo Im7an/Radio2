@@ -33,29 +33,36 @@ public class State {
    public static final String STATE_PAUSE        = "Pause";
    public static final String STATE_PLAY         = "Lecture";
    public static final String STATE_BUFFER       = "Chargement...";
-    public static final String STATE_DUCK         = "\\_o< coin";
-    public static final String STATE_DISCONNECTED = "Déconnecté";
+   public static final String STATE_DUCK         = "\\_o< coin";
+   public static final String STATE_DISCONNECTED = "Déconnecté";
+
 
    private static String current_state = STATE_STOP;
 
-   //private static boolean current_isNetworkUrl = false;
+   private static boolean current_isNetworkUrl = false;
 
-   public static void setState(Context context, String s) {
+   public static void setState(Context context, String s, boolean isNetworkUrl) {
 
       if ( s == null )
          return;
 
+
       current_state = s;
 
-      //current_isNetworkUrl = isNetworkUrl;
+      current_isNetworkUrl = isNetworkUrl;
 
       Intent intent = new Intent(intent_state);
       intent.putExtra("state", current_state);
-      intent.putExtra("url", Player.url);
-      intent.putExtra("name", Player.name);
+      intent.putExtra("url", PlayerService.url);
+      intent.putExtra("name", PlayerService.name);
 
       context.sendBroadcast(intent);
    }
+
+
+    public static void get_state(Context context) {
+        setState(context, current_state, current_isNetworkUrl);
+    }
 
 
    public static boolean is(String s) {

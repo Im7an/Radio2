@@ -39,13 +39,12 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.webkit.URLUtil;
 
-import org.oucho.radio2.egaliseur.AudioEffectsReceiver;
 import org.oucho.radio2.net.Connectivity;
 import org.oucho.radio2.net.WifiLocker;
 import org.oucho.radio2.utils.Counter;
 import org.oucho.radio2.utils.Later;
 
-public class Player extends Service
+public class PlayerService extends Service
    implements
       OnBufferingUpdateListener,
       OnInfoListener,
@@ -113,12 +112,10 @@ public class Player extends Service
 
       if ( player != null ) {
 
-         Intent i = new Intent(this, AudioEffectsReceiver.class);
-         i.setAction(AudioEffectsReceiver.ACTION_CLOSE_AUDIO_EFFECT_SESSION);
-         sendBroadcast(i);
-
          player.release();
          player = null;
+
+
       }
 
       if ( connectivity != null ) {
@@ -143,18 +140,27 @@ public class Player extends Service
 
       String action = intent.getStringExtra("action");
 
-      if (action.equals(intent_stop))
-         return stop();
+      if (action.equals(intent_stop)) {
+          //Notification.updateNotification(context, name, "Stop");
+          return stop();
+      }
       
-      if (action.equals(intent_pause))
-         return pause();
-      
-      if (action.equals(intent_restart))
-         return restart();
+      if (action.equals(intent_pause)) {
+          //Notification.updateNotification(context, name, "Pause");
 
-      if (action.equals(intent_play))
+          return pause();
+      }
+
+      if (action.equals(intent_restart)) {
+          //Notification.updateNotification(context, name, "Lecture");
+
+          return restart();
+      }
+      if (action.equals(intent_play)) {
+          //Notification.updateNotification(context, name, "Lecture");
+
           intentPlay(intent);
-
+      }
       return done();
    }
 
@@ -174,6 +180,7 @@ public class Player extends Service
         failure_ttl = initial_failure_ttl;
         return play(url);
     }
+
 
    public int play() {
        return play(url);
@@ -212,10 +219,6 @@ public class Player extends Service
          player.setOnErrorListener(this);
          player.setOnCompletionListener(this);
 
-         Intent i = new Intent(this, AudioEffectsReceiver.class);
-         i.setAction(AudioEffectsReceiver.ACTION_OPEN_AUDIO_EFFECT_SESSION);
-         i.putExtra(AudioEffectsReceiver.EXTRA_AUDIO_SESSION_ID, player.getAudioSessionId());
-         sendBroadcast(i);
       }
 
       if ( isNetworkUrl(url) )
@@ -263,7 +266,7 @@ public class Player extends Service
          player.start();
          Counter.timePasses();
          failure_ttl = initial_failure_ttl;
-         State.setState(context, State.STATE_PLAY);
+         State.setState(context, State.STATE_PLAY, isNetworkUrl());
       }
    }
 
@@ -311,7 +314,7 @@ public class Player extends Service
     * Reduce volume, for a short while, for a notification.
     ***********************************************************************************************/
 
-    private int duck(String msg) {
+    private int duck() {
 
         if ( State.is(State.STATE_DUCK) || ! State.isPlaying() )
             return done();
@@ -375,7 +378,7 @@ public class Player extends Service
    private int done(String state) {
 
       if ( state != null )
-         State.setState(context, state);
+         State.setState(context, state, isNetworkUrl());
       return done();
    }
 
@@ -397,12 +400,12 @@ public class Player extends Service
 
       switch (what) {
          case MediaPlayer.MEDIA_INFO_BUFFERING_START:
-            State.setState(context, State.STATE_BUFFER);
+            State.setState(context, State.STATE_BUFFER, isNetworkUrl());
             break;
 
          case MediaPlayer.MEDIA_INFO_BUFFERING_END:
             failure_ttl = initial_failure_ttl;
-            State.setState(context, State.STATE_PLAY);
+            State.setState(context, State.STATE_PLAY, isNetworkUrl());
              break;
 
           default: //do nothing
@@ -461,7 +464,7 @@ public class Player extends Service
 
    @Override
    public boolean onError(MediaPlayer player, int what, int extra) {
-      State.setState(context,State.STATE_ERROR);
+      State.setState(context,State.STATE_ERROR, isNetworkUrl());
        tryRecover(); // This calls stop_soon().
 
       // Returning true, here, prevents the onCompletionlistener from being called.
@@ -472,7 +475,7 @@ public class Player extends Service
    public void onCompletion(MediaPlayer mp) {
 
       if ( ! isNetworkUrl() && (State.is(State.STATE_PLAY) || State.is(State.STATE_DUCK)) )
-         State.setState(context, State.STATE_COMPLETE);
+         State.setState(context, State.STATE_COMPLETE, isNetworkUrl());
 
       stop_soon();
    }
@@ -497,7 +500,7 @@ public class Player extends Service
                break;
 
              case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-                 duck("Audio focus lost, \\_o< coin");
+                 duck();
                  break;
 
              default: //do nothing

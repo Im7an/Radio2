@@ -40,7 +40,7 @@ public class Playlist extends AsyncTask<Void, Void, String> {
    private static final int M3U     = 1;
    private static final int PLS     = 2;
 
-   private Player player = null;
+   private PlayerService player = null;
    private String start_url = null;
    private int then = 0;
 
@@ -49,7 +49,7 @@ public class Playlist extends AsyncTask<Void, Void, String> {
     private static final String url_regex = "\\(?\\b(http://|www[.])[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]";
     private static Pattern url_pattern = null;
 
-   Playlist(Player a_player, String a_url) {
+   Playlist(PlayerService a_player, String a_url) {
 
       super();
       player = a_player;

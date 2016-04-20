@@ -26,28 +26,18 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".egaliseur.EqualizerActivity"
-            android:label="@string/action_equalizer"
-            android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.oucho.radio2.MainActivity"/>
-        </activity>
 
-        <service android:name=".Player" />
+        <service android:name=".PlayerService" />
 
-        <receiver
-            android:name=".egaliseur.AudioEffectsReceiver"
-            android:enabled="true"
-            android:exported="false">
+
+        <receiver android:name=".utils.Notification">
+
             <intent-filter>
-                <action android:name="org.oucho.radio2.OPEN_AUDIO_EFFECT_SESSION"/>
-                <action android:name="org.oucho.radio2.CLOSE_AUDIO_EFFECT_SESSION"/>
+                <action android:name="org.oucho.radio2.STATE"/>
+                <action android:name="org.oucho.radio2.STOP"/>
             </intent-filter>
-        </receiver>
 
+        </receiver>
     </application>
 
 </manifest>

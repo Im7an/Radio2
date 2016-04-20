@@ -2,9 +2,6 @@ package org.oucho.radio2;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -27,30 +24,26 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import org.oucho.radio2.egaliseur.AudioEffects;
-import org.oucho.radio2.egaliseur.EqualizerActivity;
 import org.oucho.radio2.itf.ListsClickListener;
-import org.oucho.radio2.itf.RadioAdapter;
 import org.oucho.radio2.itf.PlayableItem;
 import org.oucho.radio2.itf.Radio;
+import org.oucho.radio2.itf.RadioAdapter;
 import org.oucho.radio2.timer.GetAudioFocusTask;
+import org.oucho.radio2.utils.Notification;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -70,24 +63,15 @@ public class MainActivity extends AppCompatActivity implements
     private static final String STOP = "stop";
     private static final String STATE = "org.oucho.radio2.STATE";
 
-    //private static final int USER_SETTINGS_REQUEST = 10;
-    private static final int NOTIF_ID = 15;
 
     private static final String fichier_préférence = "org.oucho.radio2_preferences";
     private static SharedPreferences préférences = null;
 
 
+    private static String etat_lecture = "";
 
     private static String nom_radio = "";
-    private static final String nom_radio_pref = "";
-    private static String action_lecteur = "";
 
-    private static String etat_lecture = "";
-    private static final String etat_lecture_pref = "";
-
-
-    private Etat_player Etat_player_Receiver;
-    private NotificationManager notificationManager;
 
     private RecyclerView radioView;
 
@@ -110,15 +94,18 @@ public class MainActivity extends AppCompatActivity implements
 
         setContentView(R.layout.activity_main);
 
+        context = getApplicationContext();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        context = getApplicationContext();
 
         préférences = getSharedPreferences(fichier_préférence, MODE_PRIVATE);
 
 
-        Etat_player_Receiver = new Etat_player();
+        Etat_player Etat_player_Receiver = new Etat_player();
+        IntentFilter filter = new IntentFilter(STATE);
+        registerReceiver(Etat_player_Receiver, filter);
 
 
         Control_Volume niveau_Volume = new Control_Volume(this, new Handler());
@@ -140,7 +127,10 @@ public class MainActivity extends AppCompatActivity implements
         actionBar.setTitle(Html.fromHtml("<font color='" + couleurTitre + "'>" + titre + "</font>"));
 
 
+
+
         radioView = (RecyclerView)findViewById(R.id.recyclerView);
+
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -149,27 +139,6 @@ public class MainActivity extends AppCompatActivity implements
         assert mNavigationView != null;
         mNavigationView.setNavigationItemSelectedListener(this);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        radioView.setLayoutManager(layoutManager);
-
-
-        updateListView();
-        AudioEffects.init(this);
-        getBitRate();
-
-        nom_radio = préférences.getString("name", nom_radio_pref);
-        action_lecteur = préférences.getString("action", etat_lecture_pref);
-
-        createNotification(nom_radio, action_lecteur);
-
-        updatePlayStatus();
-
-        volume();
-
-
-        this.findViewById(R.id.add).setOnClickListener(this);
-        this.findViewById(R.id.timer).setOnClickListener(this);
-        this.findViewById(R.id.play).setOnClickListener(this);
 
         ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
 
@@ -184,8 +153,32 @@ public class MainActivity extends AppCompatActivity implements
         upArrow.setColorFilter(ContextCompat.getColor(context, R.color.controls_tint_light), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
 
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        radioView.setLayoutManager(layoutManager);
+
+
+
+        this.findViewById(R.id.add).setOnClickListener(this);
+        this.findViewById(R.id.timer).setOnClickListener(this);
+        this.findViewById(R.id.play).setOnClickListener(this);
+
+
+
+        updateListView();
+
+        getBitRate();
+        volume();
+
+
+
+        State.get_state(context);
+
     }
 
+
+    public static Context getContext() {
+        return context;
+    }
 
 
     /* *********************************************************************************************
@@ -196,45 +189,64 @@ public class MainActivity extends AppCompatActivity implements
     protected void onPause() {
         super.onPause();
 
-        SharedPreferences.Editor editor = préférences.edit();
-        editor.putString("etat", etat_lecture);
-        editor.apply();
-
-        if (!"play".equals(etat_lecture))
             killNotif();
     }
 
+
+
     /* *********************************************************************************************
-     * Réactivation de l'application
+     * Destruction de l'application
      * ********************************************************************************************/
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onDestroy() {
+        super.onDestroy();
 
-        IntentFilter filter = new IntentFilter(STATE);
-        registerReceiver(Etat_player_Receiver, filter);
-
-        TextView nomStation = (TextView) findViewById(R.id.station);
-        assert nomStation != null;
-        nomStation.setText(nom_radio);
-
-        etat_lecture = préférences.getString("etat", etat_lecture_pref);
-
-        TextView myAwesomeTextView = (TextView) findViewById(R.id.etat);
-        assert myAwesomeTextView != null;
-        myAwesomeTextView.setText(action_lecteur);
-
-        nom_radio = préférences.getString("name", nom_radio_pref);
-        action_lecteur = préférences.getString("action", etat_lecture_pref);
-
-        createNotification(nom_radio, action_lecteur);
-
-        updatePlayStatus();
-
-        volume();
+        SharedPreferences.Editor editor = préférences.edit();
+        editor.putString("name", nom_radio);
+        editor.apply();
 
     }
+
+
+
+    /***********************************************************************************************
+     * Broadcast receiver
+     **********************************************************************************************/
+
+    private class Etat_player extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            /* Statut player */
+            TextView status = (TextView) findViewById(R.id.etat);
+
+            etat_lecture = intent.getStringExtra("state");
+
+            /* Nom radio */
+            TextView StationTextView = (TextView) findViewById(R.id.station);
+
+            nom_radio = intent.getStringExtra("name");
+
+            if (nom_radio == null) {
+                nom_radio = préférences.getString("name", "");
+            }
+
+
+            assert status != null;
+            status.setText(etat_lecture);
+
+            assert StationTextView != null;
+            StationTextView.setText(nom_radio);
+
+            updatePlayStatus();
+
+        }
+    }
+
+
+
     /* *********************************************************************************************
      * Navigation Drawer
      * ********************************************************************************************/
@@ -244,14 +256,9 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         mDrawerLayout.closeDrawers();
 
-        Intent player = new Intent(this, Player.class);
+        Intent player = new Intent(this, PlayerService.class);
 
         switch (menuItem.getItemId()) {
-            case R.id.action_equalizer:
-                //NavigationUtils.showEqualizer(MainActivity.this);
-                equalizer();
-                break;
-
             case R.id.action_musique:
                 musique();
                 break;
@@ -269,13 +276,11 @@ public class MainActivity extends AppCompatActivity implements
                 break;
 
             case R.id.nav_exit:
-                etat_lecture = "stop";
                 player.putExtra("action", STOP);
                 startService(player);
 
                 SharedPreferences.Editor editor = préférences.edit();
-                editor.putString("etat", "stop");
-                editor.putString("action", "");
+                editor.putString("name", nom_radio);
                 editor.apply();
 
                 stopTimer();
@@ -292,11 +297,6 @@ public class MainActivity extends AppCompatActivity implements
         return true;
     }
 
-    private void equalizer() {
-        Intent intent = new Intent();
-        intent.setClass(this, EqualizerActivity.class);
-        startActivityForResult(intent, 0);
-    }
 
 
 
@@ -312,8 +312,10 @@ public class MainActivity extends AppCompatActivity implements
         Intent appStartIntent = pm.getLaunchIntentForPackage("org.oucho.musicplayer");
         context.startActivity(appStartIntent);
 
-        killNotif();
+            killNotif();
     }
+
+
 
     /* *********************************************************************************************
      * Gestion des clicks
@@ -322,23 +324,19 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onClick(View v) {
 
-        Intent player = new Intent(this, Player.class);
+        Intent player = new Intent(this, PlayerService.class);
 
         switch (v.getId()) {
             case R.id.play:
                 switch (etat_lecture) {
-                    case "stop":
-                        etat_lecture = "play";
+                    case "Stop":
                         player.putExtra("action", PLAY);
                         startService(player);
-                        updatePlayStatus();
                         break;
 
-                    case "play":
-                        etat_lecture = "stop";
+                    case "Lecture":
                         player.putExtra("action", STOP);
                         startService(player);
-                        updatePlayStatus();
                         break;
 
                     default: //do nothing
@@ -371,29 +369,6 @@ public class MainActivity extends AppCompatActivity implements
         radioView.setAdapter(new RadioAdapter(this, items, clickListener));
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
 
     private final ListsClickListener clickListener = new ListsClickListener() {
 
@@ -422,15 +397,13 @@ public class MainActivity extends AppCompatActivity implements
 
         String name = radio.getName();
 
-        Intent player = new Intent(this, Player.class);
+        Intent player = new Intent(this, PlayerService.class);
 
         player.putExtra("action", "play");
         player.putExtra("url", url);
         player.putExtra("name", name);
         startService(player);
 
-        etat_lecture = "play";
-        updatePlayStatus();
 
     }
 
@@ -489,12 +462,6 @@ public class MainActivity extends AppCompatActivity implements
         dialog.show();
     }
 
-    public static Context getContext() {
-        return context;
-    }
-
-
-
 
 
     /* *********************************************************************************************
@@ -507,7 +474,7 @@ public class MainActivity extends AppCompatActivity implements
 
         ImageView button = (ImageView) findViewById(R.id.play);
 
-        if ("stop".equals(etat_lecture)) {
+        if ("Stop".equals(etat_lecture)) {
 
             equalizer.setBackground(getDrawable(R.drawable.ic_equalizer0));
 
@@ -521,6 +488,28 @@ public class MainActivity extends AppCompatActivity implements
             button.setImageResource(R.drawable.musicplayer_pause);
         }
     }
+
+
+
+    /* *********************************************************************************************
+     * Notification
+     * ********************************************************************************************/
+
+
+    private void killNotif() {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+
+            @SuppressLint("SetTextI18n")
+            public void run() {
+
+                if (! "Lecture".equals(etat_lecture))
+                    Notification.removeNotification(context);
+
+            }
+        }, 500);
+    }
+
 
 
     /***********************************************************************************************
@@ -637,44 +626,6 @@ public class MainActivity extends AppCompatActivity implements
             }
         }, 1000);
     }
-
-
-
-    /***********************************************************************************************
-     * Broadcast receiver
-     **********************************************************************************************/
-
-    private class Etat_player extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            TextView status = (TextView) findViewById(R.id.etat);
-            String action_lecteur = intent.getStringExtra("state");
-            assert status != null;
-            status.setText(action_lecteur);
-
-            SharedPreferences.Editor editor = préférences.edit();
-
-            if ("Déconnecté".equals(action_lecteur)) {
-                etat_lecture = "stop";
-                editor.putString("etat", etat_lecture);
-            }
-
-            editor.putString("action", action_lecteur);
-            editor.apply();
-
-            TextView StationTextView = (TextView) findViewById(R.id.station);
-            String lecture = intent.getStringExtra("name");
-            assert StationTextView != null;
-            StationTextView.setText(lecture);
-
-            nom_radio = préférences.getString("name", nom_radio_pref);
-            action_lecteur = préférences.getString("action", etat_lecture_pref);
-            createNotification(nom_radio, action_lecteur);
-        }
-    }
-
 
 
     /***********************************************************************************************
@@ -842,58 +793,11 @@ public class MainActivity extends AppCompatActivity implements
 
 
     public static void stop(Context context) {
-        Intent player = new Intent(context, Player.class);
+        Intent player = new Intent(context, PlayerService.class);
         player.putExtra("action", "stop");
         context.startService(player);
 
         running = false;
-    }
-
-
-
-    /* *********************************************************************************************
-     * Notification
-     * ********************************************************************************************/
-
-    private void createNotification(String nom, String action) {
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-
-        Intent i = new Intent(this, MainActivity.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent intent = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        builder.setContentIntent(intent);
-        builder.setSmallIcon(R.drawable.notification);
-        builder.setOngoing(true);
-
-        Boolean unlock;
-        unlock = "play".equals(etat_lecture);
-        builder.setOngoing(unlock);
-
-        Notification notification = builder.build();
-        RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.notification);
-
-        contentView.setTextViewText(R.id.notif_name, nom);
-        contentView.setTextViewText(R.id.notif_text, action);
-
-        notification.contentView = contentView;
-
-        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIF_ID, notification);
-    }
-
-    private void killNotif() {
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-
-            @SuppressLint("SetTextI18n")
-            public void run() {
-
-                notificationManager.cancel(NOTIF_ID);
-
-            }
-        }, 500);
     }
 
 

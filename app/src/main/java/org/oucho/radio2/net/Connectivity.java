@@ -32,7 +32,7 @@ import android.preference.PreferenceManager;
 
 import org.oucho.radio2.utils.Counter;
 import org.oucho.radio2.utils.Later;
-import org.oucho.radio2.Player;
+import org.oucho.radio2.PlayerService;
 import org.oucho.radio2.State;
 
 public class Connectivity extends BroadcastReceiver
@@ -40,7 +40,7 @@ public class Connectivity extends BroadcastReceiver
    private static ConnectivityManager connectivity = null;
 
    private Context context = null;
-   private Player player = null;
+   private PlayerService player = null;
    private static final int TYPE_NONE = -1;
 
    private static int previous_type = TYPE_NONE;
@@ -49,7 +49,7 @@ public class Connectivity extends BroadcastReceiver
     private int then = 0;
 
 
-   public Connectivity(Context a_context, Player a_player)
+   public Connectivity(Context a_context, PlayerService a_player)
    {
       context = a_context;
       player = a_player;
@@ -141,7 +141,7 @@ public class Connectivity extends BroadcastReceiver
    public void dropped_connection() {  // We've lost connectivity.
       player.stop();
       then = Counter.now();
-      State.setState(context, State.STATE_DISCONNECTED);
+      State.setState(context, State.STATE_DISCONNECTED, true);
 
       if ( disable_task != null )
          disable_task.cancel(true);

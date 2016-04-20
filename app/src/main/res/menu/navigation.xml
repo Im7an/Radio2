@@ -7,11 +7,6 @@
     <group>
 
         <item
-            android:id="@+id/action_equalizer"
-            android:icon="@drawable/ic_menu_equalizer"
-            android:title="@string/action_equalizer" />
-
-        <item
             android:id="@+id/action_sleep_timer"
             android:icon="@drawable/ic_sleep_timer"
             android:title="@string/action_sleep_timer" />
