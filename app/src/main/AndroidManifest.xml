@@ -31,12 +31,10 @@
         <service android:name=".PlayerService" />
 
 
-        <receiver android:name=".utils.StopReceiver"
-            android:exported="true" >
+        <receiver android:name=".utils.StopReceiver" >
 
             <intent-filter>
                 <action android:name="org.oucho.radio2.STATE"/>
-
                 <action android:name="org.oucho.radio2.STOP"/>
             </intent-filter>
 

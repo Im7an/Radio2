@@ -206,6 +206,8 @@ public class MainActivity extends AppCompatActivity implements
         editor.putString("name", nom_radio);
         editor.apply();
 
+        killNotif();
+
     }
 
 
@@ -505,7 +507,7 @@ public class MainActivity extends AppCompatActivity implements
             @SuppressLint("SetTextI18n")
             public void run() {
 
-                if (! "Lecture".equals(etat_lecture))
+                if (!State.isPlaying())
                     Notification.removeNotification(context);
 
             }

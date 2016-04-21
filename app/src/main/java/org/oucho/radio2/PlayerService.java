@@ -227,6 +227,13 @@ public class PlayerService extends Service
       playlist_task = new Playlist(this,url).start();
 
       start_buffering();
+
+
+      Intent intent = new Intent();
+      intent.setAction("org.oucho.musicplayer.STOP");
+      intent.putExtra("halt", "stop");
+      sendBroadcast(intent);
+
       return done(State.STATE_BUFFER);
    }
 

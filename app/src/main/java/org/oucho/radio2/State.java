@@ -109,6 +109,10 @@ public class State {
        return State.is(STATE_STOP) || State.is(STATE_ERROR) || State.is(STATE_COMPLETE);
    }
 
+    public static boolean isPaused() {
+        return State.is(STATE_PAUSE);
+    }
+
    public static boolean isWantPlaying() {
        return isPlaying() || is(STATE_ERROR);
    }
