@@ -24,8 +24,8 @@ import android.os.AsyncTask;
 
 import org.oucho.radio2.utils.Counter;
 
-public abstract class Later extends AsyncTask<Integer, Void, Void>
-{
+public abstract class Later extends AsyncTask<Integer, Void, Void> {
+
    private static final int default_seconds = 120;
    private int seconds = default_seconds;
 
@@ -48,22 +48,27 @@ public abstract class Later extends AsyncTask<Integer, Void, Void>
       then = Counter.now();
    }
 
-   public Later()
-      { this(default_seconds); }
+   public Later() {
+      this(default_seconds);
+   }
 
-   protected Void doInBackground(Integer... args)
-   {
-      try { if ( 0 < seconds ) Thread.sleep(seconds * 1000); }
+   protected Void doInBackground(Integer... args) {
+
+      try {
+         if ( 0 < seconds )
+            Thread.sleep(seconds * 1000);
+      }
       catch ( Exception ignored) { }
       return null;
    }
 
-   protected void onPostExecute(Void ignored)
-   {
+   protected void onPostExecute(Void ignored) {
+
       if ( ! isCancelled() && Counter.still(then) )
          later();
    }
 
-   public AsyncTask<Integer,Void,Void> start()
-      { return executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR); }
+   public AsyncTask<Integer,Void,Void> start() {
+      return executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+   }
 }

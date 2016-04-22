@@ -62,9 +62,9 @@ import org.oucho.radio2.itf.ListsClickListener;
 import org.oucho.radio2.itf.PlayableItem;
 import org.oucho.radio2.itf.Radio;
 import org.oucho.radio2.itf.RadioAdapter;
-import org.oucho.radio2.timer.GetAudioFocusTask;
-import org.oucho.radio2.utils.EqualizerView;
+import org.oucho.radio2.utils.GetAudioFocusTask;
 import org.oucho.radio2.utils.Notification;
+import org.oucho.radio2.utils.State;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -77,8 +77,8 @@ public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         View.OnClickListener {
 
-    private static Context context;
 
+    private static Context context;
 
     private static final String PLAY = "play";
     private static final String STOP = "stop";
@@ -90,20 +90,19 @@ public class MainActivity extends AppCompatActivity implements
 
 
     private static String etat_lecture = "";
-
     private static String nom_radio = "";
 
-
     private RecyclerView radioView;
-
     private DrawerLayout mDrawerLayout;
-
-    private EqualizerView equalizer;
-
 
     private static boolean running;
 
     private static ScheduledFuture mTask;
+
+    private CountDownTimer timerEcran;
+
+    private ImageView timeAfficheur0;
+    private TextView timeAfficheur1;
 
 
     /* *********************************************************************************************
@@ -150,11 +149,6 @@ public class MainActivity extends AppCompatActivity implements
         actionBar.setTitle(Html.fromHtml("<font color='" + couleurTitre + "'>" + titre + "</font>"));
 
 
-
-
-        radioView = (RecyclerView)findViewById(R.id.recyclerView);
-
-
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         NavigationView mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
@@ -176,6 +170,9 @@ public class MainActivity extends AppCompatActivity implements
         upArrow.setColorFilter(ContextCompat.getColor(context, R.color.controls_tint_light), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
 
+
+        radioView = (RecyclerView)findViewById(R.id.recyclerView);
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         radioView.setLayoutManager(layoutManager);
 
@@ -186,13 +183,10 @@ public class MainActivity extends AppCompatActivity implements
         this.findViewById(R.id.play).setOnClickListener(this);
 
 
-
         updateListView();
 
         getBitRate();
         volume();
-
-
 
         State.getState(context);
 
@@ -212,8 +206,6 @@ public class MainActivity extends AppCompatActivity implements
     protected void onPause() {
         super.onPause();
 
-        equalizer.stopBars();
-
         killNotif();
     }
 
@@ -221,14 +213,12 @@ public class MainActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
 
-        if (State.isPlaying()) {
 
-            equalizer = (EqualizerView) findViewById(R.id.equalizer_view);
 
-            assert equalizer != null;
-            equalizer.animateBars();
-        }
+        if (running)
+            showTimeEcran();
     }
+
 
     /* *********************************************************************************************
      * Destruction de l'application
@@ -257,33 +247,65 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            /* Statut player */
-            TextView status = (TextView) findViewById(R.id.etat);
 
-            etat_lecture = intent.getStringExtra("state");
+            String receiveIntent = intent.getAction();
 
-            /* Nom radio */
-            TextView StationTextView = (TextView) findViewById(R.id.station);
+            if ("org.oucho.radio2.STATE".equals(receiveIntent)) {
 
-            nom_radio = intent.getStringExtra("name");
+                /* Statut player */
+                TextView status = (TextView) findViewById(R.id.etat);
 
-            if (nom_radio == null) {
-                nom_radio = préférences.getString("name", "");
+                etat_lecture = intent.getStringExtra("state");
+
+                assert status != null;
+                status.setText(etat_lecture);
+
+                nom_radio = intent.getStringExtra("name");
+
+                updateNomRadio();
+
+                updatePlayPause();
+
             }
-
-
-            assert status != null;
-            status.setText(etat_lecture);
-
-            assert StationTextView != null;
-            StationTextView.setText(nom_radio);
-
-            updatePlayStatus();
 
         }
     }
 
+    /* *********************************
+     * Affiche le nom de la radio active
+     * *********************************/
 
+    private void updateNomRadio() {
+
+        /* Nom radio */
+        TextView StationTextView = (TextView) findViewById(R.id.station);
+
+        if (nom_radio == null)
+            nom_radio = préférences.getString("name", "");
+
+        assert StationTextView != null;
+        StationTextView.setText(nom_radio);
+    }
+
+
+    /* ****************************
+     * Changement d'état play/pause
+     * ****************************/
+
+    @SuppressWarnings("ConstantConditions")
+    private void updatePlayPause() {
+        ImageView equalizer = (ImageView) findViewById(R.id.icon_equalizer);
+        ImageView button = (ImageView) findViewById(R.id.play);
+
+        if ("Stop".equals(etat_lecture)) {
+            equalizer.setBackground(getDrawable(R.drawable.ic_equalizer0));
+            button.setImageResource(R.drawable.musicplayer_play);
+
+        } else {
+            equalizer.setBackground(getDrawable(R.drawable.ic_equalizer1));
+            button.setImageResource(R.drawable.musicplayer_pause);
+        }
+    }
 
     /* *********************************************************************************************
      * Navigation Drawer
@@ -497,34 +519,7 @@ public class MainActivity extends AppCompatActivity implements
 
 
     /* *********************************************************************************************
-     * Fcontionnalités sur l'afficheur
-     * ********************************************************************************************/
-
-    @SuppressWarnings("ConstantConditions")
-    private void updatePlayStatus() {
-
-        equalizer = (EqualizerView) findViewById(R.id.equalizer_view);
-
-        ImageView button = (ImageView) findViewById(R.id.play);
-
-        if ("Stop".equals(etat_lecture)) {
-
-            equalizer.stopBars();
-
-            button.setImageResource(R.drawable.musicplayer_play);
-
-        } else {
-
-            equalizer.animateBars();
-
-            button.setImageResource(R.drawable.musicplayer_pause);
-        }
-    }
-
-
-
-    /* *********************************************************************************************
-     * Notification
+     * Fermeture notification
      * ********************************************************************************************/
 
 
@@ -715,6 +710,29 @@ public class MainActivity extends AppCompatActivity implements
         dialog.show();
     }
 
+
+    private void startTimer(final int hours, final int minutes) {
+
+        final String impossible = getString(R.string.impossible);
+
+        final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        final int delay = ((hours * 3600) + (minutes * 60)) * 1000;
+
+        if (delay == 0) {
+            Toast.makeText(this, impossible, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        mTask = scheduler.schedule(new GetAudioFocusTask(this), delay, TimeUnit.MILLISECONDS);
+
+        Notification.setState(true);
+        running = true;
+        State.getState(context);
+
+        showTimeEcran();
+    }
+
+
     private void showTimerInfo() {
 
         final String continuer = getString(R.string.continuer);
@@ -727,17 +745,21 @@ public class MainActivity extends AppCompatActivity implements
         }
         @SuppressLint("InflateParams")
         View view = getLayoutInflater().inflate(R.layout.timer_info_dialog, null);
+
         final TextView timeLeft = ((TextView) view.findViewById(R.id.time_left));
 
 
         final String stopTimer = getString(R.string.stop_timer);
 
         final AlertDialog dialog = new AlertDialog.Builder(this).setPositiveButton(continuer, new DialogInterface.OnClickListener() {
+
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
+
         }).setNegativeButton(cancelTimer, new DialogInterface.OnClickListener() {
+
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 stopTimer();
@@ -745,6 +767,7 @@ public class MainActivity extends AppCompatActivity implements
                 Context context = getApplicationContext();
 
                 Toast.makeText(context, stopTimer, Toast.LENGTH_LONG).show();
+
             }
         }).setView(view).create();
 
@@ -770,62 +793,56 @@ public class MainActivity extends AppCompatActivity implements
         dialog.show();
     }
 
-    private void startTimer(final int hours, final int minutes) {
 
-        final String impossible = getString(R.string.impossible);
+    private void showTimeEcran() {
 
-        final String heureSingulier = getString(R.string.heure_singulier);
-        final String heurePluriel = getString(R.string.heure_pluriel);
 
-        final String minuteSingulier = getString(R.string.minute_singulier);
-        final String minutePluriel = getString(R.string.minute_pluriel);
+        timeAfficheur0 = ((ImageView) findViewById(R.id.icon_time));
+        timeAfficheur1 = ((TextView) findViewById(R.id.time_ecran));
 
-        final String arret = getString(R.string.arret);
-        final String et = getString(R.string.et);
 
-        final String heureTxt;
-        final String minuteTxt;
+        timeAfficheur0.setVisibility(View.VISIBLE);
+        timeAfficheur1.setVisibility(View.VISIBLE);
 
-        final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        final int delay = ((hours * 3600) + (minutes * 60)) * 1000;
+        timerEcran = new CountDownTimer(mTask.getDelay(TimeUnit.MILLISECONDS), 1000) {
+            @Override
+            public void onTick(long seconds) {
 
-        if (delay == 0) {
-            Toast.makeText(this, impossible, Toast.LENGTH_LONG).show();
-            return;
-        }
+                long secondes = seconds;
 
-        if (hours == 1) {
-            heureTxt = heureSingulier;
-        } else {
-            heureTxt = heurePluriel;
-        }
+                secondes = secondes / 1000;
 
-        if (minutes == 1) {
-            minuteTxt = minuteSingulier;
-        } else {
-            minuteTxt = minutePluriel;
-        }
-        mTask = scheduler.schedule(new GetAudioFocusTask(this), delay, TimeUnit.MILLISECONDS);
+                String textTemps = String.format(getString(R.string.timer_info), (secondes / 3600), ((secondes % 3600) / 60), ((secondes % 3600) % 60));
 
-        if (hours == 0) {
-            Toast.makeText(this, arret + " " + minutes + " " + minuteTxt, Toast.LENGTH_LONG).show();
-        } else if (minutes == 0) {
-            Toast.makeText(this, arret + " " + hours + " " + heureTxt, Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(this, arret + " " + hours + " " + heureTxt + " " + et + " " + minutes + " " + minuteTxt, Toast.LENGTH_LONG).show();
-        }
+                timeAfficheur1.setText(textTemps);
+            }
 
-        Notification.setState(true);
-        running = true;
-        State.getState(context);
+            @Override
+            public void onFinish() {
+                timeAfficheur0.setVisibility(View.INVISIBLE);
+                timeAfficheur1.setVisibility(View.INVISIBLE);
+            }
+
+        }.start();
     }
 
-    private static void stopTimer() {
-        if (running) mTask.cancel(true);
+
+    private void stopTimer() {
+       if (running)
+           mTask.cancel(true);
+
+        timerEcran.cancel();
+
         running = false;
 
         Notification.setState(false);
         State.getState(context);
+
+        timeAfficheur0 = ((ImageView) findViewById(R.id.icon_time));
+        timeAfficheur1 = ((TextView) findViewById(R.id.time_ecran));
+
+        timeAfficheur0.setVisibility(View.INVISIBLE);
+        timeAfficheur1.setVisibility(View.INVISIBLE);
     }
 
 

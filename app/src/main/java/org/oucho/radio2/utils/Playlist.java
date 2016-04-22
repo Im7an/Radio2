@@ -18,7 +18,7 @@
  *
  */
 
-package org.oucho.radio2;
+package org.oucho.radio2.utils;
 
 import java.util.Random;
 import java.util.ArrayList;
@@ -29,8 +29,8 @@ import android.os.AsyncTask;
 import android.webkit.URLUtil;
 import android.net.Uri;
 
+import org.oucho.radio2.PlayerService;
 import org.oucho.radio2.net.HttpGetter;
-import org.oucho.radio2.utils.Counter;
 
 public class Playlist extends AsyncTask<Void, Void, String> {
 
@@ -49,7 +49,7 @@ public class Playlist extends AsyncTask<Void, Void, String> {
     private static final String url_regex = "\\(?\\b(http://|www[.])[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]";
     private static Pattern url_pattern = null;
 
-   Playlist(PlayerService a_player, String a_url) {
+   public Playlist(PlayerService a_player, String a_url) {
 
       super();
       player = a_player;

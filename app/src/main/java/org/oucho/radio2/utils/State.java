@@ -18,10 +18,12 @@
  *
  */
 
-package org.oucho.radio2;
+package org.oucho.radio2.utils;
 
 import android.content.Context;
 import android.content.Intent;
+
+import org.oucho.radio2.PlayerService;
 
 public class State {
 

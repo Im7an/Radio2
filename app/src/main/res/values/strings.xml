@@ -60,15 +60,6 @@
     <string name="impossible">0 impossible</string>
 
 
-    <string name="heure_singulier">heure</string>
-    <string name="heure_pluriel">heures</string>
-
-    <string name="minute_singulier">minute</string>
-    <string name="minute_pluriel">minutes</string>
-
-    <string name="arret">Arrêt dans</string>
-    <string name="et">et</string>
-
     <string name="stop_timer">Timer arrêté</string>
 
 </resources>

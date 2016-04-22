@@ -25,13 +25,13 @@ import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 
 
-public class WifiLocker
-{
+public class WifiLocker {
+
    private static WifiLock lock = null;
    private static WifiManager manager = null;
 
-   public static void lock(Context context, String app_name)
-   {
+   public static void lock(Context context, String app_name) {
+
       if ( manager == null )
          manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 
@@ -41,8 +41,10 @@ public class WifiLocker
       if ( lock == null )
          return;
 
-      if ( ! Connectivity.onWifi() )
-         { unlock(); return; }
+      if ( ! Connectivity.onWifi() ) {
+          unlock();
+          return;
+      }
 
       if ( lock.isHeld() )
          return;
@@ -50,11 +52,10 @@ public class WifiLocker
       lock.acquire();
    }
 
-   public static void unlock()
-   {
+   public static void unlock() {
+
       if ( lock != null && lock.isHeld() )
-      {
          lock.release();
-      }
+
    }
 }

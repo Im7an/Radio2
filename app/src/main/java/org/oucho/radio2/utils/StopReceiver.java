@@ -28,7 +28,6 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 
 import org.oucho.radio2.PlayerService;
-import org.oucho.radio2.State;
 
 public class StopReceiver extends BroadcastReceiver {
 

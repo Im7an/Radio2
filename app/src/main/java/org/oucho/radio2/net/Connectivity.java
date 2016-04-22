@@ -33,10 +33,10 @@ import android.preference.PreferenceManager;
 import org.oucho.radio2.utils.Counter;
 import org.oucho.radio2.utils.Later;
 import org.oucho.radio2.PlayerService;
-import org.oucho.radio2.State;
+import org.oucho.radio2.utils.State;
 
-public class Connectivity extends BroadcastReceiver
-{
+public class Connectivity extends BroadcastReceiver {
+
    private static ConnectivityManager connectivity = null;
 
    private Context context = null;
@@ -49,8 +49,8 @@ public class Connectivity extends BroadcastReceiver
     private int then = 0;
 
 
-   public Connectivity(Context a_context, PlayerService a_player)
-   {
+   public Connectivity(Context a_context, PlayerService a_player) {
+
       context = a_context;
       player = a_player;
 
@@ -58,22 +58,24 @@ public class Connectivity extends BroadcastReceiver
       context.registerReceiver(this, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
    }
 
-   static private void initConnectivity(Context context)
-   {
+   static private void initConnectivity(Context context) {
+
       if ( connectivity == null )
          connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
       if ( connectivity != null )
          previous_type = getType();
    }
 
-   public void destroy()
-      { context.unregisterReceiver(this); }
+   public void destroy() {
+      context.unregisterReceiver(this);
+   }
 
-   static private int getType()
-      { return getType(null); }
+   static private int getType() {
+      return getType(null);
+   }
 
-   static private int getType(Intent intent)
-   {
+   static private int getType(Intent intent) {
+
       if (connectivity == null)
          return TYPE_NONE;
 
@@ -81,8 +83,8 @@ public class Connectivity extends BroadcastReceiver
          return TYPE_NONE;
 
       NetworkInfo network = connectivity.getActiveNetworkInfo();
-      if ( network != null && network.isConnected() )
-      {
+      if ( network != null && network.isConnected() ) {
+
          int type = network.getType();
          switch (type) {
             // These cases all fall through.
@@ -100,10 +102,12 @@ public class Connectivity extends BroadcastReceiver
       return TYPE_NONE;
    }
 
-   public static boolean onWifi()
-      { return previous_type == ConnectivityManager.TYPE_WIFI; }
+   public static boolean onWifi() {
 
-   static public boolean isConnected(Context context){
+      return previous_type == ConnectivityManager.TYPE_WIFI;
+   }
+
+   static public boolean isConnected(Context context) {
        initConnectivity(context);
       return (getType() != TYPE_NONE);
    }
@@ -111,29 +115,19 @@ public class Connectivity extends BroadcastReceiver
 
 
    @Override
-   public void onReceive(Context context, Intent intent)
-   {
+   public void onReceive(Context context, Intent intent) {
+
       int type = getType(intent);
       boolean want_network_playing = State.isWantPlaying() && player.isNetworkUrl();
 
       if ( type == TYPE_NONE && previous_type != TYPE_NONE && want_network_playing )
          dropped_connection();
 
-      if ( previous_type == TYPE_NONE
-            && type != previous_type
-            && Counter.still(then)
-            )
-      {  // We have become reconnected, and we're still in the window to resume playback.
+      if ( previous_type == TYPE_NONE && type != previous_type && Counter.still(then) )
          restart();
-      }
 
-      // We can get from mobile data to WiFi without going through TYPE_NONE.
-      // So the counter does not help.
-      // && Counter.still(then)
       if ( previous_type != TYPE_NONE && type != TYPE_NONE && type != previous_type && want_network_playing )
-      {  // We have moved to a different type of network.
          restart();
-      }
 
       previous_type = type;
    }

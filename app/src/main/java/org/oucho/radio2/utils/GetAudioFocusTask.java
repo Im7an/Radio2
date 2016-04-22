@@ -18,7 +18,7 @@
  *
  */
 
-package org.oucho.radio2.timer;
+package org.oucho.radio2.utils;
 
 import org.oucho.radio2.MainActivity;
 

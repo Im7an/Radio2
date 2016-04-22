@@ -43,6 +43,8 @@ import org.oucho.radio2.net.Connectivity;
 import org.oucho.radio2.net.WifiLocker;
 import org.oucho.radio2.utils.Counter;
 import org.oucho.radio2.utils.Later;
+import org.oucho.radio2.utils.Playlist;
+import org.oucho.radio2.utils.State;
 
 public class PlayerService extends Service
    implements
@@ -51,8 +53,7 @@ public class PlayerService extends Service
       OnErrorListener,
       OnPreparedListener,
       OnAudioFocusChangeListener,
-      OnCompletionListener
-{
+      OnCompletionListener {
 
    private static final String fichier_préférence = "org.oucho.radio2_preferences";
    private static SharedPreferences préférences = null;
@@ -140,27 +141,22 @@ public class PlayerService extends Service
 
       String action = intent.getStringExtra("action");
 
-      if (action.equals(intent_stop)) {
-          //Notification.updateNotification(context, name, "Stop");
+      if (action.equals(intent_stop))
           return stop();
-      }
+
       
-      if (action.equals(intent_pause)) {
-          //Notification.updateNotification(context, name, "Pause");
-
+      if (action.equals(intent_pause))
           return pause();
-      }
 
-      if (action.equals(intent_restart)) {
-          //Notification.updateNotification(context, name, "Lecture");
 
+      if (action.equals(intent_restart))
           return restart();
-      }
-      if (action.equals(intent_play)) {
-          //Notification.updateNotification(context, name, "Lecture");
 
+
+      if (action.equals(intent_play))
           intentPlay(intent);
-      }
+
+
       return done();
    }
 
@@ -191,9 +187,9 @@ public class PlayerService extends Service
       stop(false);
 
 
-      if ( ! URLUtil.isValidUrl(url) ) {
+      if ( ! URLUtil.isValidUrl(url) )
          return stop();
-      }
+
 
       if ( isNetworkUrl(url) && ! Connectivity.isConnected(context) ) {
 
@@ -202,10 +198,10 @@ public class PlayerService extends Service
       }
 
       int focus = audio_manager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-      if ( focus != AudioManager.AUDIOFOCUS_REQUEST_GRANTED ) {
 
+      if ( focus != AudioManager.AUDIOFOCUS_REQUEST_GRANTED )
          return stop();
-      }
+
 
 
       if ( player == null ) {
@@ -241,13 +237,15 @@ public class PlayerService extends Service
    public int playLaunch(String url) {
 
       launch_url = null;
-      if ( ! URLUtil.isValidUrl(url) ) {
+
+      if ( ! URLUtil.isValidUrl(url) )
          return stop();
-      }
+
 
       launch_url = url;
 
       WifiLocker.unlock();
+
       if ( isNetworkUrl(url) )
          WifiLocker.lock(context, app_name);
 
@@ -300,6 +298,7 @@ public class PlayerService extends Service
 
          if ( player.isPlaying() )
             player.stop();
+
          player.reset();
          player.release();
          player = null;
@@ -342,11 +341,11 @@ public class PlayerService extends Service
          pause_task.cancel(true);
 
       pause_task =
-         new Later()
-         {
+         new Later() {
+
             @Override
-            public void later()
-            {
+            public void later() {
+
                pause_task = null;
                stop();
             }
@@ -370,13 +369,14 @@ public class PlayerService extends Service
          return done(State.STATE_PLAY);
 
       int focus = audio_manager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-      if ( focus != AudioManager.AUDIOFOCUS_REQUEST_GRANTED ) {
-         return done();
-      }
 
-      if ( pause_task != null ) {
+      if ( focus != AudioManager.AUDIOFOCUS_REQUEST_GRANTED )
+         return done();
+
+
+      if ( pause_task != null )
           pause_task.cancel(true); pause_task = null;
-      }
+
 
       player.start();
       return done(State.STATE_PLAY);
@@ -386,6 +386,7 @@ public class PlayerService extends Service
 
       if ( state != null )
          State.setState(context, state, isNetworkUrl());
+
       return done();
    }
 
@@ -413,10 +414,10 @@ public class PlayerService extends Service
          case MediaPlayer.MEDIA_INFO_BUFFERING_END:
             failure_ttl = initial_failure_ttl;
             State.setState(context, State.STATE_PLAY, isNetworkUrl());
-             break;
+            break;
 
           default: //do nothing
-              break;
+            break;
       }
       return true;
    }

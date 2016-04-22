@@ -20,8 +20,8 @@
 
 package org.oucho.radio2.utils;
 
-public class Counter
-{
+public class Counter {
+
    private static volatile int counter = 1;
 
    public static int now() {
