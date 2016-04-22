@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -38,14 +39,24 @@
         android:layout_marginTop="65dp"
         android:layout_centerHorizontal="true"/>
 
-    <ImageView
+<!--    <ImageView
         android:id="@+id/icon_equalizer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/ic_equalizer0"
         android:layout_marginTop="62dp"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="25dp" />
+        android:layout_marginLeft="25dp" />-->
+
+    <org.oucho.radio2.utils.EqualizerView
+        android:id="@+id/equalizer_view"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="62dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="27dp"
+        custom:foregroundColor="@color/colorAccent"
+        custom:animDuration="8000"/>
 
     <TextView
         android:id="@+id/bitrate"

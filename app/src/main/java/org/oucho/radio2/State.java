@@ -37,7 +37,8 @@ public class State {
    public static final String STATE_DISCONNECTED = "Déconnecté";
 
 
-   private static String current_state = STATE_STOP;
+
+    private static String current_state = STATE_STOP;
 
    private static boolean current_isNetworkUrl = false;
 

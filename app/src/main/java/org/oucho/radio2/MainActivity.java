@@ -43,6 +43,7 @@ import org.oucho.radio2.itf.PlayableItem;
 import org.oucho.radio2.itf.Radio;
 import org.oucho.radio2.itf.RadioAdapter;
 import org.oucho.radio2.timer.GetAudioFocusTask;
+import org.oucho.radio2.utils.EqualizerView;
 import org.oucho.radio2.utils.Notification;
 
 import java.util.ArrayList;
@@ -76,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements
     private RecyclerView radioView;
 
     private DrawerLayout mDrawerLayout;
+
+    private EqualizerView equalizer;
 
 
     private static boolean running;
@@ -189,10 +192,22 @@ public class MainActivity extends AppCompatActivity implements
     protected void onPause() {
         super.onPause();
 
-            killNotif();
+        equalizer.stopBars();
+
+        killNotif();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
 
+        if (State.isPlaying()) {
+
+            equalizer = (EqualizerView) findViewById(R.id.equalizer_view);
+
+            equalizer.animateBars();
+        }
+    }
 
     /* *********************************************************************************************
      * Destruction de l'application
@@ -264,14 +279,6 @@ public class MainActivity extends AppCompatActivity implements
             case R.id.action_musique:
                 musique();
                 break;
-/*
-            case R.id.action_sleep_timer:
-                if (! running) {
-                    showDatePicker();
-                } else {
-                    showTimerInfo();
-                }
-                break;*/
 
             case R.id.nav_help:
                 about();
@@ -474,20 +481,23 @@ public class MainActivity extends AppCompatActivity implements
 
     @SuppressWarnings("ConstantConditions")
     private void updatePlayStatus() {
-        ImageView equalizer = (ImageView) findViewById(R.id.icon_equalizer);
+        //ImageView equalizer = (ImageView) findViewById(R.id.icon_equalizer);
+
+        equalizer = (EqualizerView) findViewById(R.id.equalizer_view);
 
         ImageView button = (ImageView) findViewById(R.id.play);
 
         if ("Stop".equals(etat_lecture)) {
 
-            equalizer.setBackground(getDrawable(R.drawable.ic_equalizer0));
+            //equalizer.setBackground(getDrawable(R.drawable.ic_equalizer0));
+            equalizer.stopBars();
 
 
             button.setImageResource(R.drawable.musicplayer_play);
         } else {
 
-            equalizer.setBackground(getDrawable(R.drawable.ic_equalizer1));
-
+            //equalizer.setBackground(getDrawable(R.drawable.ic_equalizer1));
+            equalizer.animateBars();
 
             button.setImageResource(R.drawable.musicplayer_pause);
         }
@@ -786,6 +796,9 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         running = true;
+
+        Notification.setState(true);
+        State.getState(context);
     }
 
     private static void stopTimer() {
@@ -793,6 +806,8 @@ public class MainActivity extends AppCompatActivity implements
 
         running = false;
 
+        Notification.setState(false);
+        State.getState(context);
     }
 
 
@@ -802,6 +817,9 @@ public class MainActivity extends AppCompatActivity implements
         context.startService(player);
 
         running = false;
+
+        Notification.setState(false);
+        State.getState(context);
     }
 
 

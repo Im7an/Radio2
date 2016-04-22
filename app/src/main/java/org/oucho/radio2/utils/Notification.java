@@ -15,8 +15,14 @@ public class Notification {
 
     private static final int NOTIFY_ID = 32;
 
+    private static boolean timer = false;
+
+    public static void setState(boolean onOff){
+        timer = onOff;
+    }
 
     public static void updateNotification(Context ctx, String nom_radio, String action) {
+
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(ctx);
 
@@ -25,7 +31,12 @@ public class Notification {
         PendingIntent intent = PendingIntent.getActivity(ctx, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
 
         builder.setContentIntent(intent);
-        builder.setSmallIcon(R.drawable.notification);
+
+        if (!timer) {
+            builder.setSmallIcon(R.drawable.notification);
+        } else {
+            builder.setSmallIcon(R.drawable.notification_sleeptimer);
+        }
         builder.setOngoing(true);
 
         Boolean unlock;
