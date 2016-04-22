@@ -1,6 +1,7 @@
 package org.oucho.radio2.itf;
 
 
+import android.annotation.SuppressLint;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ public class RadioAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
 
+    @SuppressLint("InflateParams")
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 

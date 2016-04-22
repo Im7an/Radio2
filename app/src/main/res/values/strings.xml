@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Radio</string>
 
     <string name="radio_name">Nom de la radio</string>
@@ -39,7 +39,7 @@
 
 
     <!-- Timer -->
-    <string name="timer_info" formatted="false">%02d:%02d:%02d</string>
+    <string name="timer_info" formatted="false" tools:ignore="StringFormatInvalid">%02d:%02d:%02d</string>
     <string name="start">démarrer</string>
     <string name="cancel">annuler</string>
     <string name="continuer">continuer</string>
@@ -58,5 +58,4 @@
 
     <string name="stop_timer">Timer arrêté</string>
 
-    <string name="action_sleep_timer">Minuteur sommeil</string>
 </resources>

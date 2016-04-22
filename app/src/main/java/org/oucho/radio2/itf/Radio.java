@@ -39,15 +39,12 @@ public class Radio implements PlayableItem {
 	
 	public static void addRadio(Radio radio) {
 		RadiosDatabase radiosDatabase = new RadiosDatabase();
-		SQLiteDatabase db = radiosDatabase.getWritableDatabase();
 		ContentValues values = new ContentValues();
 		values.put("url", radio.url);
 		values.put("name", radio.name);
-		try {
+		try (SQLiteDatabase db = radiosDatabase.getWritableDatabase()) {
 			db.insertOrThrow("WebRadio", null, values);
-		} catch(Exception ignored) {
-		} finally {
-			db.close();
+		} catch (Exception ignored) {
 		}
 	}
 	

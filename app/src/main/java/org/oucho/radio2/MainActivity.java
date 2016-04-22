@@ -205,6 +205,7 @@ public class MainActivity extends AppCompatActivity implements
 
             equalizer = (EqualizerView) findViewById(R.id.equalizer_view);
 
+            assert equalizer != null;
             equalizer.animateBars();
         }
     }
@@ -436,7 +437,7 @@ public class MainActivity extends AppCompatActivity implements
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         int title = oldRadio==null ? R.string.addRadio : R.string.edit;
         builder.setTitle(getResources().getString(title));
-        final View view = getLayoutInflater().inflate(R.layout.layout_editwebradio, null);
+        @SuppressLint("InflateParams") final View view = getLayoutInflater().inflate(R.layout.layout_editwebradio, null);
         builder.setView(view);
 
         final EditText editTextUrl = (EditText)view.findViewById(R.id.editTextUrl);
@@ -481,7 +482,6 @@ public class MainActivity extends AppCompatActivity implements
 
     @SuppressWarnings("ConstantConditions")
     private void updatePlayStatus() {
-        //ImageView equalizer = (ImageView) findViewById(R.id.icon_equalizer);
 
         equalizer = (EqualizerView) findViewById(R.id.equalizer_view);
 
@@ -489,14 +489,12 @@ public class MainActivity extends AppCompatActivity implements
 
         if ("Stop".equals(etat_lecture)) {
 
-            //equalizer.setBackground(getDrawable(R.drawable.ic_equalizer0));
             equalizer.stopBars();
 
-
             button.setImageResource(R.drawable.musicplayer_play);
+
         } else {
 
-            //equalizer.setBackground(getDrawable(R.drawable.ic_equalizer1));
             equalizer.animateBars();
 
             button.setImageResource(R.drawable.musicplayer_pause);
@@ -651,7 +649,8 @@ public class MainActivity extends AppCompatActivity implements
         final String start = getString(R.string.start);
         final String cancel = getString(R.string.cancel);
 
-        @SuppressLint("InflateParams") View view = getLayoutInflater().inflate(R.layout.date_picker_dialog, null);
+        @SuppressLint("InflateParams")
+        View view = getLayoutInflater().inflate(R.layout.date_picker_dialog, null);
 
         final TimePicker picker = (TimePicker) view.findViewById(R.id.time_picker);
         final Calendar cal = Calendar.getInstance();
@@ -706,7 +705,8 @@ public class MainActivity extends AppCompatActivity implements
             stopTimer();
             return;
         }
-        @SuppressLint("InflateParams") View view = getLayoutInflater().inflate(R.layout.timer_info_dialog, null);
+        @SuppressLint("InflateParams")
+        View view = getLayoutInflater().inflate(R.layout.timer_info_dialog, null);
         final TextView timeLeft = ((TextView) view.findViewById(R.id.time_left));
 
 
@@ -795,15 +795,13 @@ public class MainActivity extends AppCompatActivity implements
             Toast.makeText(this, arret + " " + hours + " " + heureTxt + " " + et + " " + minutes + " " + minuteTxt, Toast.LENGTH_LONG).show();
         }
 
-        running = true;
-
         Notification.setState(true);
+        running = true;
         State.getState(context);
     }
 
     private static void stopTimer() {
         if (running) mTask.cancel(true);
-
         running = false;
 
         Notification.setState(false);

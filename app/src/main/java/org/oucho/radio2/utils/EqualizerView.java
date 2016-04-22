@@ -19,16 +19,16 @@ import org.oucho.radio2.R;
 
 public class EqualizerView extends LinearLayout {
 
-    View musicBar1;
-    View musicBar2;
-    View musicBar3;
+    private View musicBar1; // NOPMD
+    private View musicBar2; // NOPMD
+    private View musicBar3; // NOPMD
 
-    AnimatorSet playingSet;
-    AnimatorSet stopSet;
-    Boolean animating = false;
+    private AnimatorSet playingSet; // NOPMD
+    private AnimatorSet stopSet; // NOPMD
+    //private Boolean animating = false;
 
-    int foregroundColor;
-    int duration;
+    private int foregroundColor; // NOPMD
+    private int duration; // NOPMD
 
 
     public EqualizerView(Context context) {
@@ -115,7 +115,7 @@ public class EqualizerView extends LinearLayout {
     }
 
     public void animateBars() {
-        animating = true;
+        //animating = true;
         if (playingSet == null) {
             ObjectAnimator scaleYbar1 = ObjectAnimator.ofFloat(musicBar1, "scaleY", 0.2f, 0.8f, 0.1f, 0.1f, 0.3f, 0.1f, 0.2f, 0.8f, 0.7f, 0.2f, 0.4f, 0.9f, 0.7f, 0.6f, 0.1f, 0.3f, 0.1f, 0.4f, 0.1f, 0.8f, 0.7f, 0.9f, 0.5f, 0.6f, 0.3f, 0.1f);
             scaleYbar1.setRepeatCount(ValueAnimator.INFINITE);
@@ -143,7 +143,7 @@ public class EqualizerView extends LinearLayout {
     }
 
     public void stopBars() {
-        animating = false;
+        //animating = false;
         if (playingSet != null && playingSet.isRunning() && playingSet.isStarted()) {
             if (Build.VERSION.SDK_INT < 19) {
                 playingSet.end();
@@ -166,9 +166,9 @@ public class EqualizerView extends LinearLayout {
         }
     }
 
-    public Boolean isAnimating() {
-        return animating;
-    }
+//    public Boolean isAnimating() {
+//        return animating;
+//    }
 
 
 }

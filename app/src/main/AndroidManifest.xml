@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="org.oucho.radio2">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -31,7 +32,8 @@
         <service android:name=".PlayerService" />
 
 
-        <receiver android:name=".utils.StopReceiver" >
+        <receiver android:name=".utils.StopReceiver"
+            tools:ignore="ExportedReceiver">
 
             <intent-filter>
                 <action android:name="org.oucho.radio2.STATE"/>

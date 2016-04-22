@@ -44,7 +44,8 @@
                 android:layout_centerVertical="true"
                 android:background="?attr/selectableItemBackground"
                 android:src="@drawable/ic_spinner_black_small"
-                android:tint="@color/appwidget_bg"/>
+                android:tint="@color/appwidget_bg"
+                card_view:ignore="ContentDescription" />
 
             <LinearLayout
                 android:id="@+id/playlist_name"
@@ -66,7 +67,8 @@
                     android:text="TEST test"
                     android:textColor="@color/primary_text"
                     android:textSize="17sp"
-                    android:gravity="center_vertical" />
+                    android:gravity="center_vertical"
+                    card_view:ignore="HardcodedText" />
 
             </LinearLayout>
 
