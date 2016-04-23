@@ -82,6 +82,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final String PLAY = "play";
     private static final String STOP = "stop";
+    private static final String RESTART = "restart";
+
     private static final String STATE = "org.oucho.radio2.STATE";
 
 
@@ -407,6 +409,11 @@ public class MainActivity extends AppCompatActivity implements
                 switch (etat_lecture) {
                     case "Stop":
                         player.putExtra("action", PLAY);
+                        startService(player);
+                        break;
+
+                    case "Pause":
+                        player.putExtra("action", RESTART);
                         startService(player);
                         break;
 

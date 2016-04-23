@@ -74,40 +74,34 @@ public class State {
 
    public static String text() {
 
-      return returnText();
+      if (is(STATE_STOP))
+          return "Stop";
 
+       if (is(STATE_PLAY))
+           return "Lecture";
+
+       if (is(STATE_PAUSE))
+           return "Pause";
+
+       if (is(STATE_BUFFER))
+           return "Chargement...";
+
+       if (is(STATE_DUCK))
+           return "\\_o< coin";
+
+       if (is(STATE_COMPLETE))
+           return "Complété";
+
+      if (is(STATE_ERROR))
+          return "Erreur";
+
+      if (is(STATE_DISCONNECTED))
+          return "Pas de connexion réseau";
+
+      // Should not happen.
+      return "Unknown";
    }
 
-    private static String returnText() {
-        if (is(STATE_STOP))
-            return "Stop";
-
-        if (is(STATE_PLAY))
-            return "Lecture";
-
-        if (is(STATE_PAUSE))
-            return "Pause";
-
-        if (is(STATE_BUFFER))
-            return "Chargement...";
-
-        if (is(STATE_DUCK))
-            return "\\_o< coin";
-
-        if (is(STATE_COMPLETE))
-            return "Complété";
-
-        if (is(STATE_ERROR))
-            return "Erreur";
-
-        if (is(STATE_DISCONNECTED))
-            return "Pas de connexion réseau";
-
-        return "Unknown";
-    }
-
-   // Paused is not in any of the following classes.
-   //
    public static boolean isPlaying() {
        return is(STATE_PLAY) || is(STATE_BUFFER) || is(STATE_DUCK);
    }
