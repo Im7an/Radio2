@@ -40,5 +40,7 @@ class RadiosDatabase extends SQLiteOpenHelper {
 	}
 
 	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {}
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		// This constructor is intentionally empty, pourquoi ? parce que !
+	}
 }

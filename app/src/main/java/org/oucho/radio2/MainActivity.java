@@ -104,8 +104,8 @@ public class MainActivity extends AppCompatActivity implements
     private ImageView timeAfficheur0;
     private TextView timeAfficheur1;
 
-    Etat_player Etat_player_Receiver;
-    boolean isRegistered = false;
+    private Etat_player Etat_player_Receiver;
+    private boolean isRegistered = false;
 
     /* *********************************************************************************************
      * Création de l'activité
@@ -772,9 +772,6 @@ public class MainActivity extends AppCompatActivity implements
 
         final TextView timeLeft = ((TextView) view.findViewById(R.id.time_left));
 
-
-        final String stopTimer = getString(R.string.stop_timer);
-
         final AlertDialog dialog = new AlertDialog.Builder(this).setPositiveButton(continuer, new DialogInterface.OnClickListener() {
 
             @Override
@@ -788,11 +785,8 @@ public class MainActivity extends AppCompatActivity implements
             public void onClick(DialogInterface dialog, int which) {
                 stopTimer();
 
-                Context context = getApplicationContext();
-
-                Toast.makeText(context, stopTimer, Toast.LENGTH_LONG).show();
-
             }
+
         }).setView(view).create();
 
         new CountDownTimer(mTask.getDelay(TimeUnit.MILLISECONDS), 1000) {
