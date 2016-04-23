@@ -53,6 +53,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -73,10 +74,16 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity implements
+public class MainActivity extends AppCompatActivity
+        implements
         NavigationView.OnNavigationItemSelectedListener,
         View.OnClickListener {
 
+
+
+   /* **********************************************************************************************
+    * Déclaration des variables
+    * *********************************************************************************************/
 
     private static Context context;
 
@@ -85,11 +92,6 @@ public class MainActivity extends AppCompatActivity implements
     private static final String RESTART = "restart";
 
     private static final String STATE = "org.oucho.radio2.STATE";
-
-
-    private static final String fichier_préférence = "org.oucho.radio2_preferences";
-    private static SharedPreferences préférences = null;
-
 
     private static String etat_lecture = "";
     private static String nom_radio = "";
@@ -106,12 +108,17 @@ public class MainActivity extends AppCompatActivity implements
     private ImageView timeAfficheur0;
     private TextView timeAfficheur1;
 
+    private ImageButton iconTimer;
+
+
     private Etat_player Etat_player_Receiver;
     private boolean isRegistered = false;
 
-    /* *********************************************************************************************
-     * Création de l'activité
-     * ********************************************************************************************/
+
+
+   /* **********************************************************************************************
+    * Création de l'activité
+    * *********************************************************************************************/
 
     @SuppressWarnings("ConstantConditions")
     @Override
@@ -124,9 +131,6 @@ public class MainActivity extends AppCompatActivity implements
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
-        préférences = getSharedPreferences(fichier_préférence, MODE_PRIVATE);
 
 
         Etat_player_Receiver = new Etat_player();
@@ -202,9 +206,14 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-    /* *********************************************************************************************
-     * Passage en arrière plan de l'application
-     * ********************************************************************************************/
+   /* **********************************************************************************************
+    * Pause / résume / etc.
+    * *********************************************************************************************/
+
+
+   /* ****************************************
+    * Passage en arrière plan de l'application
+    * ****************************************/
 
     @Override
     protected void onPause() {
@@ -217,6 +226,11 @@ public class MainActivity extends AppCompatActivity implements
 
         killNotif();
     }
+
+
+   /* ****************************************
+    * Passage au premier plan de l'application
+    * ****************************************/
 
     @Override
     protected void onResume() {
@@ -233,17 +247,13 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-    /* *********************************************************************************************
-     * Destruction de l'application
-     * ********************************************************************************************/
+   /* ****************************
+    * Destruction de l'application
+    * ****************************/
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        SharedPreferences.Editor editor = préférences.edit();
-        editor.putString("name", nom_radio);
-        editor.apply();
 
         killNotif();
 
@@ -251,9 +261,9 @@ public class MainActivity extends AppCompatActivity implements
 
 
 
-    /***********************************************************************************************
-     * Broadcast receiver
-     **********************************************************************************************/
+   /* **********************************************************************************************
+    * Broadcast receiver
+    * *********************************************************************************************/
 
     private class Etat_player extends BroadcastReceiver {
 
@@ -280,30 +290,36 @@ public class MainActivity extends AppCompatActivity implements
                 updatePlayPause();
 
             }
-
         }
     }
 
-    /* *********************************
-     * Affiche le nom de la radio active
-     * *********************************/
+
+   /* *********************************
+    * Affiche le nom de la radio active
+    * *********************************/
 
     private void updateNomRadio() {
 
         /* Nom radio */
         TextView StationTextView = (TextView) findViewById(R.id.station);
 
-        if (nom_radio == null)
+        if (nom_radio == null) {
+
+            String fichier_préférence = "org.oucho.radio2_preferences";
+
+            SharedPreferences préférences = getSharedPreferences(fichier_préférence, MODE_PRIVATE);
+
             nom_radio = préférences.getString("name", "");
+        }
 
         assert StationTextView != null;
         StationTextView.setText(nom_radio);
     }
 
 
-    /* ****************************
-     * Changement d'état play/pause
-     * ****************************/
+   /* ****************************
+    * Changement d'état play/pause
+    * ****************************/
 
     @SuppressWarnings("ConstantConditions")
     private void updatePlayPause() {
@@ -320,10 +336,11 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    /* *********************************************************************************************
-     * Navigation Drawer
-     * ********************************************************************************************/
 
+
+   /* **********************************************************************************************
+    * Navigation Drawer
+    * *********************************************************************************************/
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -342,17 +359,16 @@ public class MainActivity extends AppCompatActivity implements
                 exit();
                 break;
 
-            default: //do nothing
+            default:
                 break;
         }
         return true;
     }
 
 
-
-    /* **************************
-     * Lance l'application radio
-     * **************************/
+   /* *************************
+    * Lance l'application radio
+    * *************************/
 
     private void musique() {
 
@@ -362,23 +378,19 @@ public class MainActivity extends AppCompatActivity implements
         Intent appStartIntent = pm.getLaunchIntentForPackage("org.oucho.musicplayer");
         context.startActivity(appStartIntent);
 
-            killNotif();
+        killNotif();
     }
 
 
-
-    /* **************************
-     * Quitter
-     * **************************/
+   /* *******
+    * Quitter
+    * *******/
 
     private void exit() {
         Intent player = new Intent(this, PlayerService.class);
         player.putExtra("action", STOP);
         startService(player);
 
-        SharedPreferences.Editor editor = préférences.edit();
-        editor.putString("name", nom_radio);
-        editor.apply();
 
         if (isRegistered) {
             unregisterReceiver(Etat_player_Receiver);
@@ -395,9 +407,9 @@ public class MainActivity extends AppCompatActivity implements
 
 
 
-    /* *********************************************************************************************
-     * Gestion des clicks
-     * ********************************************************************************************/
+   /* **********************************************************************************************
+    * Gestion des clicks sur l'interface
+    * *********************************************************************************************/
 
     @Override
     public void onClick(View v) {
@@ -422,7 +434,7 @@ public class MainActivity extends AppCompatActivity implements
                         startService(player);
                         break;
 
-                    default: //do nothing
+                    default:
                         break;
                 }
                 break;
@@ -439,11 +451,17 @@ public class MainActivity extends AppCompatActivity implements
                 }
                 break;
 
-            default: //do nothing
+            default:
                 break;
         }
     }
 
+
+
+
+   /* *********************************************************************************************
+    * Mise à jour de la vue de la liste des radios
+    * ********************************************************************************************/
 
     private void updateListView() {
 
@@ -452,6 +470,11 @@ public class MainActivity extends AppCompatActivity implements
         radioView.setAdapter(new RadioAdapter(this, items, clickListener));
     }
 
+
+
+   /* *********************************************************************************************
+    * Click radio et menu radio
+    * ********************************************************************************************/
 
     private final ListsClickListener clickListener = new ListsClickListener() {
 
@@ -469,12 +492,15 @@ public class MainActivity extends AppCompatActivity implements
                 case R.id.menu_delete:
                     deleteRadio((Radio)item);
                     break;
-                default: //do nothing
+                default:
                     break;
             }
         }
     };
 
+   /* **********************************************************************************************
+    * Lecture de la radio
+    * *********************************************************************************************/
 
     private void play(Radio radio) {
 
@@ -493,6 +519,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
+
+   /* **********************************************************************************************
+    * Suppression de la radio
+    * *********************************************************************************************/
+
     private void deleteRadio(final Radio radio) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getResources().getString(R.string.deleteRadioConfirm));
@@ -505,6 +536,12 @@ public class MainActivity extends AppCompatActivity implements
         builder.setNegativeButton(R.string.cancel, null);
         builder.show();
     }
+
+
+
+   /* **********************************************************************************************
+    * Ajout ou édition d'une radio
+    * *********************************************************************************************/
 
     private void editRadio(final Radio oldRadio) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -549,10 +586,9 @@ public class MainActivity extends AppCompatActivity implements
 
 
 
-    /* *********************************************************************************************
-     * Fermeture notification
-     * ********************************************************************************************/
-
+   /* **********************************************************************************************
+    * Fermeture notification
+    * *********************************************************************************************/
 
     private void killNotif() {
         final Handler handler = new Handler();
@@ -570,9 +606,9 @@ public class MainActivity extends AppCompatActivity implements
 
 
 
-    /***********************************************************************************************
-     * Volume observer
-     **********************************************************************************************/
+   /* **********************************************************************************************
+    * Volume observer
+    * *********************************************************************************************/
 
     public class Control_Volume extends ContentObserver {
         private int previousVolume;
@@ -606,6 +642,11 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+
+    /* ******************************************
+     * Gestion de l'affichage de l'icon de volume
+     * ******************************************/
+
     private void volume() {
 
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -636,9 +677,9 @@ public class MainActivity extends AppCompatActivity implements
 
 
 
-    /***********************************************************************************************
-     * Get bitrate
-     **********************************************************************************************/
+   /* **********************************************************************************************
+    * Get bitrate
+    * *********************************************************************************************/
 
     private void getBitRate() {
         final Handler handler = new Handler();
@@ -686,9 +727,9 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-    /***********************************************************************************************
-     * Sleep Timer
-     **********************************************************************************************/
+   /* **********************************************************************************************
+    * Sleep Timer
+    * *********************************************************************************************/
 
     private void showDatePicker() {
 
@@ -742,6 +783,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
+   /* ***********
+    * Start timer
+    * ***********/
+
     private void startTimer(final int hours, final int minutes) {
 
         final String impossible = getString(R.string.impossible);
@@ -763,6 +808,10 @@ public class MainActivity extends AppCompatActivity implements
         showTimeEcran();
     }
 
+
+   /* ***************************************
+    * Afficher temps restant dans AlertDialog
+    * ***************************************/
 
     private void showTimerInfo() {
 
@@ -819,15 +868,21 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
+   /* ********************************
+    * Afficher temps restant à l'écran
+    * ********************************/
+
     private void showTimeEcran() {
 
+        iconTimer = ((ImageButton) findViewById(R.id.timer));
+        iconTimer.setColorFilter(ContextCompat.getColor(context, R.color.colorAccent));
 
         timeAfficheur0 = ((ImageView) findViewById(R.id.icon_time));
         timeAfficheur1 = ((TextView) findViewById(R.id.time_ecran));
 
-
         timeAfficheur0.setVisibility(View.VISIBLE);
         timeAfficheur1.setVisibility(View.VISIBLE);
+
 
         timerEcran = new CountDownTimer(mTask.getDelay(TimeUnit.MILLISECONDS), 1000) {
             @Override
@@ -852,11 +907,15 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
+   /* ****************
+    * Annuler le timer
+    * ****************/
+
     private void stopTimer() {
-       if (running) {
-           mTask.cancel(true);
-           timerEcran.cancel();
-       }
+        if (running) {
+            mTask.cancel(true);
+            timerEcran.cancel();
+        }
 
         running = false;
 
@@ -868,10 +927,18 @@ public class MainActivity extends AppCompatActivity implements
 
         timeAfficheur0.setVisibility(View.INVISIBLE);
         timeAfficheur1.setVisibility(View.INVISIBLE);
+
+        iconTimer = ((ImageButton) findViewById(R.id.timer));
+        iconTimer.setColorFilter(ContextCompat.getColor(context, R.color.controls_tint_light));
     }
 
 
+    /* *****************
+     * Arrêt de la radio
+     * *****************/
+
     public static void stop(Context context) {
+
         Intent player = new Intent(context, PlayerService.class);
         player.putExtra("action", "stop");
         context.startService(player);

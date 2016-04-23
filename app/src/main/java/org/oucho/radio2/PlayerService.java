@@ -28,7 +28,6 @@ import android.content.SharedPreferences.Editor;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnInfoListener;
@@ -48,7 +47,6 @@ import org.oucho.radio2.utils.State;
 
 public class PlayerService extends Service
    implements
-      OnBufferingUpdateListener,
       OnInfoListener,
       OnErrorListener,
       OnPreparedListener,
@@ -210,7 +208,6 @@ public class PlayerService extends Service
          player.setWakeMode(context, PowerManager.PARTIAL_WAKE_LOCK);
          player.setAudioStreamType(AudioManager.STREAM_MUSIC);
          player.setOnPreparedListener(this);
-         player.setOnBufferingUpdateListener(this);
          player.setOnInfoListener(this);
          player.setOnErrorListener(this);
          player.setOnCompletionListener(this);
@@ -273,6 +270,8 @@ public class PlayerService extends Service
          failure_ttl = initial_failure_ttl;
          State.setState(context, State.STATE_PLAY, isNetworkUrl());
       }
+
+
    }
 
    public boolean isNetworkUrl() {
@@ -394,14 +393,6 @@ public class PlayerService extends Service
        return START_NOT_STICKY;
    }
 
-   @Override
-   public void onBufferingUpdate(MediaPlayer player, int percent) {
-      /*
-      // Notifications of buffer state seem to be unreliable.
-      if ( 0 <= percent && percent <= 100 )
-         log("Buffering: ", ""+percent, "%");
-         */
-   }
 
    @Override
    public boolean onInfo(MediaPlayer player, int what, int extra) {

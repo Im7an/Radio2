@@ -37,15 +37,18 @@ public class StopReceiver extends BroadcastReceiver {
 
         String etat = intent.getAction();
 
+
         if ("org.oucho.radio2.STATE".equals(etat)) {
-
-            String fichier_préférence = "org.oucho.radio2_preferences";
-
-            SharedPreferences préférences = context.getSharedPreferences(fichier_préférence, 0);
 
             String nom_radio = intent.getStringExtra("name");
 
+
             if (nom_radio == null) {
+
+                String fichier_préférence = "org.oucho.radio2_preferences";
+
+                SharedPreferences préférences = context.getSharedPreferences(fichier_préférence, 0);
+
                 nom_radio = préférences.getString("name", "");
             }
 

@@ -29,7 +29,9 @@
 
     <string name="about_message">
         \n
-        Radio 2.1, Copyright © 2016 Old Geek\n
+        Radio 2, web radio for android\n
+        \n
+        Copyright © 2016 Old Geek\n
         \n
         This program is free software: you can redistribute it and/or modify
         it under the terms of the GNU General Public License as published by
@@ -46,7 +48,7 @@
         If not, see http://www.gnu.org/licenses \n
         \n
         \n
-        Code source: https://github.com/Old-Geek/Radio2\n
+        Source code: https://github.com/Old-Geek/Radio2\n
         \n
     </string>
 
