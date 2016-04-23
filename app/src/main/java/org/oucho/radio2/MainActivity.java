@@ -104,6 +104,8 @@ public class MainActivity extends AppCompatActivity implements
     private ImageView timeAfficheur0;
     private TextView timeAfficheur1;
 
+    Etat_player Etat_player_Receiver;
+    boolean isRegistered = false;
 
     /* *********************************************************************************************
      * Création de l'activité
@@ -125,10 +127,10 @@ public class MainActivity extends AppCompatActivity implements
         préférences = getSharedPreferences(fichier_préférence, MODE_PRIVATE);
 
 
-        Etat_player Etat_player_Receiver = new Etat_player();
+        Etat_player_Receiver = new Etat_player();
         IntentFilter filter = new IntentFilter(STATE);
         registerReceiver(Etat_player_Receiver, filter);
-
+        isRegistered = true;
 
         Control_Volume niveau_Volume = new Control_Volume(this, new Handler());
         getApplicationContext().getContentResolver().registerContentObserver(android.provider.Settings.System.CONTENT_URI, true, niveau_Volume);
@@ -206,6 +208,11 @@ public class MainActivity extends AppCompatActivity implements
     protected void onPause() {
         super.onPause();
 
+        if (isRegistered) {
+            unregisterReceiver(Etat_player_Receiver);
+            isRegistered = false;
+        }
+
         killNotif();
     }
 
@@ -213,7 +220,11 @@ public class MainActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
 
-
+        if (!isRegistered) {
+            IntentFilter filter = new IntentFilter(STATE);
+            registerReceiver(Etat_player_Receiver, filter);
+            isRegistered = true;
+        }
 
         if (running)
             showTimeEcran();
@@ -316,8 +327,6 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         mDrawerLayout.closeDrawers();
 
-        Intent player = new Intent(this, PlayerService.class);
-
         switch (menuItem.getItemId()) {
             case R.id.action_musique:
                 musique();
@@ -328,19 +337,7 @@ public class MainActivity extends AppCompatActivity implements
                 break;
 
             case R.id.nav_exit:
-                player.putExtra("action", STOP);
-                startService(player);
-
-                SharedPreferences.Editor editor = préférences.edit();
-                editor.putString("name", nom_radio);
-                editor.apply();
-
-                stopTimer();
-
-                killNotif();
-
-                finish();
-
+                exit();
                 break;
 
             default: //do nothing
@@ -348,7 +345,6 @@ public class MainActivity extends AppCompatActivity implements
         }
         return true;
     }
-
 
 
 
@@ -365,6 +361,34 @@ public class MainActivity extends AppCompatActivity implements
         context.startActivity(appStartIntent);
 
             killNotif();
+    }
+
+
+
+    /* **************************
+     * Quitter
+     * **************************/
+
+    private void exit() {
+        Intent player = new Intent(this, PlayerService.class);
+        player.putExtra("action", STOP);
+        startService(player);
+
+        SharedPreferences.Editor editor = préférences.edit();
+        editor.putString("name", nom_radio);
+        editor.apply();
+
+        if (isRegistered) {
+            unregisterReceiver(Etat_player_Receiver);
+            isRegistered = false;
+        }
+
+        stopTimer();
+
+        killNotif();
+
+        finish();
+
     }
 
 
@@ -828,10 +852,10 @@ public class MainActivity extends AppCompatActivity implements
 
 
     private void stopTimer() {
-       if (running)
+       if (running) {
            mTask.cancel(true);
-
-        timerEcran.cancel();
+           timerEcran.cancel();
+       }
 
         running = false;
 

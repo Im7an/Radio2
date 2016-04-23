@@ -399,7 +399,7 @@ public class PlayerService extends Service
       /*
       // Notifications of buffer state seem to be unreliable.
       if ( 0 <= percent && percent <= 100 )
-         log("Buffering: ", ""+percent, "%"); 
+         log("Buffering: ", ""+percent, "%");
          */
    }
 
