@@ -736,15 +736,12 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void stopBitrate() {
-        handler.removeCallbacksAndMessages(null);
-    }
 
     private void bitRate() {
         final int uid = android.os.Process.myUid();
         final long received = TrafficStats.getUidRxBytes(uid) / 1024;
 
-        final Handler handler = new Handler();
+        handler = new Handler();
 
         handler.postDelayed(new Runnable() {
 
@@ -775,6 +772,10 @@ public class MainActivity extends AppCompatActivity
         }, 1000);
     }
 
+
+    private void stopBitrate() {
+        handler.removeCallbacksAndMessages(null);
+    }
 
    /* **********************************************************************************************
     * Sleep Timer
