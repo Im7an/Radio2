@@ -115,6 +115,8 @@ public class MainActivity extends AppCompatActivity
     private Etat_player Etat_player_Receiver;
     private boolean isRegistered = false;
 
+    private Handler handler;
+
 
    /* **********************************************************************************************
     * Création de l'activité
@@ -226,6 +228,9 @@ public class MainActivity extends AppCompatActivity
         }
 
         killNotif();
+
+        stopBitrate();
+
     }
 
 
@@ -249,6 +254,7 @@ public class MainActivity extends AppCompatActivity
             TextView status = (TextView) findViewById(R.id.etat);
 
             etat_lecture = "Stop";
+            assert status != null;
             status.setText(etat_lecture);
         }
 
@@ -453,6 +459,7 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.pause:
+
                 switch (etat_lecture) {
                     case "Lecture":
                         player.putExtra("action", PAUSE);
@@ -713,14 +720,24 @@ public class MainActivity extends AppCompatActivity
     * *********************************************************************************************/
 
     private void getBitRate() {
-        final Handler handler = new Handler();
+
+        handler = new Handler();
+
         handler.postDelayed(new Runnable() {
 
             public void run() {
+
                 bitRate();
+
                 handler.postDelayed(this, 2000);
+
             }
         }, 1);
+
+    }
+
+    private void stopBitrate() {
+        handler.removeCallbacksAndMessages(null);
     }
 
     private void bitRate() {
@@ -728,6 +745,7 @@ public class MainActivity extends AppCompatActivity
         final long received = TrafficStats.getUidRxBytes(uid) / 1024;
 
         final Handler handler = new Handler();
+
         handler.postDelayed(new Runnable() {
 
             @SuppressLint("SetTextI18n")
