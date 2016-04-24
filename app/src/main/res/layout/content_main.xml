@@ -133,17 +133,41 @@
             tools:ignore="ContentDescription" />
 
         <ImageButton
+            android:id="@+id/stop"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toStartOf="@+id/play"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="center"
+            android:src="@drawable/icon_stop"
+            android:tint="@color/colorAccent"
+            android:layout_centerHorizontal="true"
+            tools:ignore="ContentDescription" />
+
+        <ImageButton
             android:id="@+id/play"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginEnd="20dp"
-            android:layout_marginStart="12dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginStart="25dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:scaleType="center"
             android:src="@drawable/musicplayer_play"
             android:tint="@color/colorAccent"
             android:layout_centerHorizontal="true"
             tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/pause"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@+id/play"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="center"
+            android:src="@drawable/icon_pause"
+            android:tint="@color/colorAccent"
+            android:layout_centerHorizontal="true"
+            tools:ignore="ContentDescription"/>
 
         <ImageButton
             android:id="@+id/add"

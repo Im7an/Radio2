@@ -17,7 +17,8 @@ Pre-requisites
 Screenshots
 -----------
 
-<img alt="screenshot" src="/screenshot/screen.jpg?raw=true" width="250px" />
+<img alt="screenshot" src="/screenshot/01.jpg?raw=true" width="250px" />
+<img alt="screenshot" src="/screenshot/02.jpg?raw=true" width="250px" />
 
 License
 -------

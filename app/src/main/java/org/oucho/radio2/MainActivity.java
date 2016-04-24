@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final String PLAY = "play";
     private static final String STOP = "stop";
+    private static final String PAUSE = "pause";
     private static final String RESTART = "restart";
 
     private static final String STATE = "org.oucho.radio2.STATE";
@@ -113,7 +114,6 @@ public class MainActivity extends AppCompatActivity
 
     private Etat_player Etat_player_Receiver;
     private boolean isRegistered = false;
-
 
 
    /* **********************************************************************************************
@@ -188,10 +188,11 @@ public class MainActivity extends AppCompatActivity
 
         this.findViewById(R.id.add).setOnClickListener(this);
         this.findViewById(R.id.timer).setOnClickListener(this);
+
+        this.findViewById(R.id.stop).setOnClickListener(this);
         this.findViewById(R.id.play).setOnClickListener(this);
+        this.findViewById(R.id.pause).setOnClickListener(this);
 
-
-        updateListView();
 
         getBitRate();
         volume();
@@ -242,6 +243,16 @@ public class MainActivity extends AppCompatActivity
             isRegistered = true;
         }
 
+
+        if (State.isStopped()) {
+            
+            TextView status = (TextView) findViewById(R.id.etat);
+
+            etat_lecture = "Stop";
+            status.setText(etat_lecture);
+        }
+
+
         if (running)
             showTimeEcran();
     }
@@ -285,6 +296,8 @@ public class MainActivity extends AppCompatActivity
 
                 nom_radio = intent.getStringExtra("name");
 
+                updateListView();
+
                 updateNomRadio();
 
                 updatePlayPause();
@@ -324,15 +337,14 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("ConstantConditions")
     private void updatePlayPause() {
         ImageView equalizer = (ImageView) findViewById(R.id.icon_equalizer);
-        ImageView button = (ImageView) findViewById(R.id.play);
 
-        if ("Stop".equals(etat_lecture)) {
+        if (State.isStopped() && State.isWantPlaying()) {
             equalizer.setBackground(getDrawable(R.drawable.ic_equalizer0));
-            button.setImageResource(R.drawable.musicplayer_play);
 
         } else {
+
             equalizer.setBackground(getDrawable(R.drawable.ic_equalizer1));
-            button.setImageResource(R.drawable.musicplayer_pause);
+
         }
     }
 
@@ -417,6 +429,12 @@ public class MainActivity extends AppCompatActivity
         Intent player = new Intent(this, PlayerService.class);
 
         switch (v.getId()) {
+
+            case R.id.stop:
+                player.putExtra("action", STOP);
+                startService(player);
+                break;
+
             case R.id.play:
                 switch (etat_lecture) {
                     case "Stop":
@@ -429,8 +447,20 @@ public class MainActivity extends AppCompatActivity
                         startService(player);
                         break;
 
+                    default:
+                        break;
+                }
+                break;
+
+            case R.id.pause:
+                switch (etat_lecture) {
                     case "Lecture":
-                        player.putExtra("action", STOP);
+                        player.putExtra("action", PAUSE);
+                        startService(player);
+                        break;
+
+                    case "Pause":
+                        player.putExtra("action", RESTART);
                         startService(player);
                         break;
 
@@ -465,9 +495,11 @@ public class MainActivity extends AppCompatActivity
 
     private void updateListView() {
 
+
+
         ArrayList<Object> items = new ArrayList<>();
         items.addAll(Radio.getRadios());
-        radioView.setAdapter(new RadioAdapter(this, items, clickListener));
+        radioView.setAdapter(new RadioAdapter(this, items, nom_radio, clickListener));
     }
 
 
@@ -514,7 +546,6 @@ public class MainActivity extends AppCompatActivity
         player.putExtra("url", url);
         player.putExtra("name", name);
         startService(player);
-
 
     }
 
@@ -875,7 +906,7 @@ public class MainActivity extends AppCompatActivity
     private void showTimeEcran() {
 
         iconTimer = ((ImageButton) findViewById(R.id.timer));
-        iconTimer.setColorFilter(ContextCompat.getColor(context, R.color.colorAccent));
+        iconTimer.setColorFilter(ContextCompat.getColor(context, R.color.vert));
 
         timeAfficheur0 = ((ImageView) findViewById(R.id.icon_time));
         timeAfficheur1 = ((TextView) findViewById(R.id.time_ecran));

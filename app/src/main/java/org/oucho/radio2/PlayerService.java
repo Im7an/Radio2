@@ -105,6 +105,10 @@ public class PlayerService extends Service
 
    }
 
+    public static String getName() {
+        return name;
+    }
+
    public void onDestroy() {
 
       stop();

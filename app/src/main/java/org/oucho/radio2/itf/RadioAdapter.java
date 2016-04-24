@@ -37,12 +37,16 @@ public class RadioAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private final LayoutInflater inflater;
     private final ListsClickListener clickListener;
 
+    private String nomRadio;
 
-    public RadioAdapter(MainActivity activity, ArrayList<Object> items, ListsClickListener clickListener) {
+
+    public RadioAdapter(MainActivity activity, ArrayList<Object> items, String nomRadio, ListsClickListener clickListener) {
         this.activity = activity;
         this.items = items;
         this.clickListener = clickListener;
         inflater = activity.getLayoutInflater();
+
+        this.nomRadio = nomRadio;
     }
 
 
@@ -58,7 +62,7 @@ public class RadioAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Object item = items.get(position);
 
-        ((RadioViewHolder) holder).update((Radio)item);
+        ((RadioViewHolder) holder).update((Radio)item, nomRadio);
 
     }
 
