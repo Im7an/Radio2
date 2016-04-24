@@ -302,9 +302,9 @@ public class MainActivity extends AppCompatActivity
 
                 nom_radio = intent.getStringExtra("name");
 
-                updateListView();
-
                 updateNomRadio();
+
+                updateListView();
 
                 updatePlayPause();
 
@@ -345,6 +345,7 @@ public class MainActivity extends AppCompatActivity
         ImageView equalizer = (ImageView) findViewById(R.id.icon_equalizer);
 
         if (State.isStopped() && State.isWantPlaying()) {
+
             equalizer.setBackground(getDrawable(R.drawable.ic_equalizer0));
 
         } else {
@@ -501,8 +502,6 @@ public class MainActivity extends AppCompatActivity
     * ********************************************************************************************/
 
     private void updateListView() {
-
-
 
         ArrayList<Object> items = new ArrayList<>();
         items.addAll(Radio.getRadios());
