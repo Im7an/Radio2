@@ -37,7 +37,7 @@ public class RadioAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private final LayoutInflater inflater;
     private final ListsClickListener clickListener;
 
-    private String nomRadio;
+    private final String nomRadio;
 
 
     public RadioAdapter(MainActivity activity, ArrayList<Object> items, String nomRadio, ListsClickListener clickListener) {

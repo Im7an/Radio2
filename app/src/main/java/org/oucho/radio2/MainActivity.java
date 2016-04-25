@@ -49,6 +49,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -189,8 +190,6 @@ public class MainActivity extends AppCompatActivity
 
 
         this.findViewById(R.id.add).setOnClickListener(this);
-        this.findViewById(R.id.timer).setOnClickListener(this);
-
         this.findViewById(R.id.stop).setOnClickListener(this);
         this.findViewById(R.id.play).setOnClickListener(this);
         this.findViewById(R.id.pause).setOnClickListener(this);
@@ -356,6 +355,37 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+   /* *********************************************************************************************
+    * Menu
+    * ********************************************************************************************/
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+
+        return true;
+    }
+
+    boolean search = false;
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+
+            case R.id.set_timer:
+                if (!running) {
+                    showDatePicker();
+                } else {
+                    showTimerInfo();
+                }
+                return true;
+            default: //do nothing
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
    /* **********************************************************************************************
     * Navigation Drawer
@@ -479,14 +509,6 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.add:
                 editRadio(null);
-                break;
-
-            case R.id.timer:
-                if (!running) {
-                    showDatePicker();
-                } else {
-                    showTimerInfo();
-                }
                 break;
 
             default:
@@ -923,9 +945,6 @@ public class MainActivity extends AppCompatActivity
 
     private void showTimeEcran() {
 
-        iconTimer = ((ImageButton) findViewById(R.id.timer));
-        iconTimer.setColorFilter(ContextCompat.getColor(context, R.color.vert));
-
         timeAfficheur0 = ((ImageView) findViewById(R.id.icon_time));
         timeAfficheur1 = ((TextView) findViewById(R.id.time_ecran));
 
@@ -977,8 +996,6 @@ public class MainActivity extends AppCompatActivity
         timeAfficheur0.setVisibility(View.INVISIBLE);
         timeAfficheur1.setVisibility(View.INVISIBLE);
 
-        iconTimer = ((ImageButton) findViewById(R.id.timer));
-        iconTimer.setColorFilter(ContextCompat.getColor(context, R.color.controls_tint_light));
     }
 
 

@@ -4,6 +4,11 @@
     <string name="radio_name">Nom de la radio</string>
     <string name="url">URL</string>
 
+    <!-- nav header activity main -->
+    <string name="version">Radio 2.2</string>
+    <string name="by">Old Geek, avril 2016</string>
+
+
     <string name="edit">éditer</string>
     <string name="delete">supprimer</string>
 
@@ -13,16 +18,12 @@
     <string name="errorInvalidURL">Veuillez entrer une adresse valide</string>
 
 
-
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
 
 
     <string name="musique">Musique</string>
     <string name="exit">Quitter</string>
-
-
-    <string name="menu">Menu</string>
 
 
     <string name="about">A propos</string>

@@ -35,7 +35,7 @@ import org.oucho.radio2.R;
 class RadioViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     private final TextView text;
     private final ImageButton menu;
-    private ImageView image;
+    private final ImageView image;
     private Radio radio;
     private final MainActivity activity;
     private final ListsClickListener clickListener;
