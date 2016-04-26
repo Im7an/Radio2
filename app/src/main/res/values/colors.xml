@@ -16,8 +16,11 @@
 
     <color name="transparent">#00000000</color>
 
-
     <color name="white">#ffffff</color>
     <color name="white_10">#89ffffff</color>
+
+    <color name="timer">#003674</color>
+    <color name="zzz">#980d47a1</color>
+
 
 </resources>

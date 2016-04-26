@@ -55,7 +55,7 @@
 
 
     <!-- Timer -->
-    <string name="timer_info" formatted="false" tools:ignore="StringFormatInvalid">%02d:%02d:%02d</string>
+    <string name="timer_info" formatted="false" tools:ignore="StringFormatInvalid">%02d:%02d</string>
     <string name="start">démarrer</string>
     <string name="cancel">annuler</string>
     <string name="continuer">continuer</string>

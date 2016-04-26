@@ -40,6 +40,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -48,16 +49,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import org.oucho.radio2.itf.ListsClickListener;
@@ -66,10 +66,10 @@ import org.oucho.radio2.itf.Radio;
 import org.oucho.radio2.itf.RadioAdapter;
 import org.oucho.radio2.utils.GetAudioFocusTask;
 import org.oucho.radio2.utils.Notification;
+import org.oucho.radio2.utils.SeekArc;
 import org.oucho.radio2.utils.State;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -107,11 +107,7 @@ public class MainActivity extends AppCompatActivity
 
     private CountDownTimer timerEcran;
 
-    private ImageView timeAfficheur0;
-    private TextView timeAfficheur1;
-
-    private ImageButton iconTimer;
-
+    private TextView timeAfficheur;
 
     private Etat_player Etat_player_Receiver;
     private boolean isRegistered = false;
@@ -810,34 +806,53 @@ public class MainActivity extends AppCompatActivity
         @SuppressLint("InflateParams")
         View view = getLayoutInflater().inflate(R.layout.date_picker_dialog, null);
 
-        final TimePicker picker = (TimePicker) view.findViewById(R.id.time_picker);
-        final Calendar cal = Calendar.getInstance();
+        final SeekArc mSeekArc;
+        final TextView mSeekArcProgress;
 
-        picker.setIs24HourView(true);
+        mSeekArc = (SeekArc) view.findViewById(R.id.seekArc);
+        mSeekArcProgress = (TextView) view.findViewById(R.id.seekArcProgress);
 
-        picker.setCurrentHour(cal.get(Calendar.HOUR_OF_DAY));
+
+        mSeekArc.setOnSeekArcChangeListener(new SeekArc.OnSeekArcChangeListener() {
+
+            @Override
+            public void onStopTrackingTouch(SeekArc seekArc) {
+                // vide, obligatoire
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekArc seekArc) {
+                // vide, obligatoire
+            }
+
+            @Override
+            public void onProgressChanged(SeekArc seekArc, int progress,boolean fromUser) {
+
+                String minute;
+
+                if (progress <= 1){
+                    minute = "minute";
+                } else {
+                    minute = "minutes";
+                }
+
+                String temps = String.valueOf(progress) + " " + minute;
+
+                mSeekArcProgress.setText(temps);
+            }
+        });
+
+
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setPositiveButton(start, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                int hours;
-                int mins;
 
-                int hour = picker.getCurrentHour();
-                int minute = picker.getCurrentMinute();
-                int curHour = cal.get(Calendar.HOUR_OF_DAY);
-                int curMin = cal.get(Calendar.MINUTE);
 
-                if (hour < curHour) hours =  (24 - curHour) + (hour);
-                else hours = hour - curHour;
+                int mins = mSeekArc.getProgress();
 
-                if (minute < curMin) {
-                    hours--;
-                    mins = (60 - curMin) + (minute);
-                } else mins = minute - curMin;
-
-                startTimer(hours, mins);
+                startTimer(mins);
             }
         });
 
@@ -858,12 +873,12 @@ public class MainActivity extends AppCompatActivity
     * Start timer
     * ***********/
 
-    private void startTimer(final int hours, final int minutes) {
+    private void startTimer(final int minutes) {
 
         final String impossible = getString(R.string.impossible);
 
         final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        final int delay = ((hours * 3600) + (minutes * 60)) * 1000;
+        final int delay = (minutes * 60) * 1000;
 
         if (delay == 0) {
             Toast.makeText(this, impossible, Toast.LENGTH_LONG).show();
@@ -924,7 +939,7 @@ public class MainActivity extends AppCompatActivity
 
                 secondes = secondes / 1000;
 
-                String textTemps = String.format(getString(R.string.timer_info), (secondes / 3600), ((secondes % 3600) / 60), ((secondes % 3600) % 60));
+                String textTemps = String.format(getString(R.string.timer_info),  ((secondes % 3600) / 60), ((secondes % 3600) % 60));
 
                 timeLeft.setText(textTemps);
             }
@@ -945,11 +960,9 @@ public class MainActivity extends AppCompatActivity
 
     private void showTimeEcran() {
 
-        timeAfficheur0 = ((ImageView) findViewById(R.id.icon_time));
-        timeAfficheur1 = ((TextView) findViewById(R.id.time_ecran));
+        timeAfficheur = ((TextView) findViewById(R.id.time_ecran));
 
-        timeAfficheur0.setVisibility(View.VISIBLE);
-        timeAfficheur1.setVisibility(View.VISIBLE);
+        timeAfficheur.setVisibility(View.VISIBLE);
 
 
         timerEcran = new CountDownTimer(mTask.getDelay(TimeUnit.MILLISECONDS), 1000) {
@@ -960,15 +973,14 @@ public class MainActivity extends AppCompatActivity
 
                 secondes = secondes / 1000;
 
-                String textTemps = String.format(getString(R.string.timer_info), (secondes / 3600), ((secondes % 3600) / 60), ((secondes % 3600) % 60));
+                String textTemps = "zZz " + String.format(getString(R.string.timer_info), ((secondes % 3600) / 60), ((secondes % 3600) % 60));
 
-                timeAfficheur1.setText(textTemps);
+                timeAfficheur.setText(textTemps);
             }
 
             @Override
             public void onFinish() {
-                timeAfficheur0.setVisibility(View.INVISIBLE);
-                timeAfficheur1.setVisibility(View.INVISIBLE);
+                timeAfficheur.setVisibility(View.INVISIBLE);
             }
 
         }.start();
@@ -990,11 +1002,9 @@ public class MainActivity extends AppCompatActivity
         Notification.setState(false);
         State.getState(context);
 
-        timeAfficheur0 = ((ImageView) findViewById(R.id.icon_time));
-        timeAfficheur1 = ((TextView) findViewById(R.id.time_ecran));
+        timeAfficheur = ((TextView) findViewById(R.id.time_ecran));
 
-        timeAfficheur0.setVisibility(View.INVISIBLE);
-        timeAfficheur1.setVisibility(View.INVISIBLE);
+        timeAfficheur.setVisibility(View.INVISIBLE);
 
     }
 
@@ -1042,4 +1052,21 @@ public class MainActivity extends AppCompatActivity
         dialog.show();
     }
 
+
+    /***********************************************************************************************
+     * Touche retour
+     **********************************************************************************************/
+
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        assert drawer != null;
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
 }
