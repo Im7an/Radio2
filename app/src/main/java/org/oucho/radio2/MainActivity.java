@@ -114,7 +114,6 @@ public class MainActivity extends AppCompatActivity
 
     private Handler handler;
 
-
    /* **********************************************************************************************
     * Création de l'activité
     * *********************************************************************************************/
@@ -363,7 +362,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    boolean search = false;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
